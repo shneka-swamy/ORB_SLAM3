@@ -42,9 +42,10 @@ trajectory and the estimated trajectory.
 """
 
 import sys
-import numpy
+import numpy 
 import argparse
 import associate
+from scipy.spatial.transform import Rotation as R
 
 def align(model,data):
     """Align two trajectories using the method of Horn (closed-form).
@@ -128,7 +129,6 @@ def plot_traj(ax,stamps,traj,style,color,label):
         last= stamps[i]
     if len(x)>0:
         ax.plot(x,y,style,color=color,label=label)
-            
 
 if __name__=="__main__":
     # parse command line
@@ -155,6 +155,11 @@ if __name__=="__main__":
         sys.exit("Couldn't find matching timestamp pairs between groundtruth and estimated trajectory! Did you choose the correct sequence?")
     first_xyz = numpy.matrix([[float(value) for value in first_list[a][0:3]] for a,b in matches]).transpose()
     second_xyz = numpy.matrix([[float(value)*float(args.scale) for value in second_list[b][0:3]] for a,b in matches]).transpose()
+    
+    ate_score, gt_ate_aligned, est_ate_aligned = evaluate(first_xyz, second_xyz, True)
+    
+    
+    
     dictionary_items = second_list.items()
     sorted_second_list = sorted(dictionary_items)
 
@@ -223,7 +228,7 @@ if __name__=="__main__":
         ax.set_xlabel('x [m]')
         ax.set_ylabel('y [m]')
         plt.axis('equal')
-        plt.savefig(args.plot,format="pdf")
+        plt.savefig(args.plot,format="png")
 
 
         
