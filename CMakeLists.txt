@@ -32,7 +32,7 @@ include(${CMAKE_BINARY_DIR}/conan/conan.cmake)
 
 conan_cmake_configure(
   REQUIRES
-  opencv/3.4.17
+  #  opencv/4.5.5
   boost/1.72.0
   zlib/1.2.12
   GENERATORS
@@ -74,7 +74,7 @@ endif()
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
-find_package(OpenCV 4.0 COMPONENTS calib2d core features2d highgui imgproc imgcodecs)
+find_package(OpenCV 4.0 COMPONENTS core features2d highgui imgproc imgcodecs)
 if(NOT OpenCV_FOUND)
   find_package(OpenCV 3.0)
   if(NOT OpenCV_FOUND)
@@ -90,13 +90,18 @@ find_package(Pangolin REQUIRED)
 find_package(realsense2)
 
 set(OPENCV_LIBRARIES
-  opencv::opencv_calib2d
+	#opencv::opencv_calib2d
   opencv::opencv_core
   opencv::opencv_features2d
   opencv::opencv_highgui
   opencv::opencv_imgproc
   opencv::opencv_imgcodecs
   )
+
+MESSAGE(STATUS "${OpenCV_INCLUDE_DIRS} ${OpenCV_LIBS}")
+
+set(OPENCV_LIBRARIES
+	${OpenCV_LIBS})
 
 include_directories(
 ${PROJECT_SOURCE_DIR}

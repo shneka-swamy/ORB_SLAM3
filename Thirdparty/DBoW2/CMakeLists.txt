@@ -20,6 +20,8 @@ add_library(DBoW2
   DUtils/Random.cpp
   DUtils/Timestamp.cpp)
 
+MESSAGE(STATUS "OpenCV LIBRARIES: ${OPENCV_LIBRARIES}")
+
 target_link_libraries(DBoW2 PUBLIC
   ${OPENCV_LIBRARIES}
   )
