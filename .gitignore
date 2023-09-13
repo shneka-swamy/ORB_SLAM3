@@ -28,6 +28,33 @@ Examples/ROS/ORB_SLAM3/Stereo_Inertial
 Examples/ROS/ORB_SLAM3/CMakeLists.txt.user
 Examples/ROS/ORB_SLAM3/build/
 
+Examples_old/RGB-D/rgbd_tum
+
+Examples_old/Monocular/mono_euroc
+Examples_old/Monocular/mono_kitti
+Examples_old/Monocular/mono_tum
+Examples_old/Monocular/mono_tum_vi
+
+Examples_old/Stereo/stereo_euroc
+Examples_old/Stereo/stereo_kitti
+Examples_old/Stereo/stereo_tum_vi
+
+Examples_old/Monocular-Inertial/mono_inertial_euroc
+Examples_old/Monocular-Inertial/mono_inertial_tum_vi
+
+Examples_old/Stereo-Inertial/stereo_inertial_euroc
+Examples_old/Stereo-Inertial/stereo_inertial_tum_vi
+
+Examples_old/ROS/ORB_SLAM3/Mono
+Examples_old/ROS/ORB_SLAM3/Mono_Inertial
+Examples_old/ROS/ORB_SLAM3/MonoAR
+Examples_old/ROS/ORB_SLAM3/RGBD
+Examples_old/ROS/ORB_SLAM3/Stereo
+Examples_old/ROS/ORB_SLAM3/Stereo_Inertial
+
+Examples_old/ROS/ORB_SLAM3/CMakeLists.txt.user
+Examples_old/ROS/ORB_SLAM3/build/
+
 KeyFrameTrajectory.txt
 CameraTrajectory.txt
 kf_*.txt
@@ -47,3 +74,8 @@ cmake-build-debug/
 
 *.pyc
 *.osa
+
+*.png
+*.pdf
+
+*.csv

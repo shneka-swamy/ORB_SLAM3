@@ -34,9 +34,9 @@ void LoadImages(const string &strFile, vector<string> &vstrImageFilenames,
 
 int main(int argc, char **argv)
 {
-    if(argc != 4)
+    if(argc != 5)
     {
-        cerr << endl << "Usage: ./mono_tum path_to_vocabulary path_to_settings path_to_sequence" << endl;
+        cerr << endl << "Usage: ./mono_tum path_to_vocabulary path_to_settings path_to_sequence outputFileId" << endl;
         return 1;
     }
 
@@ -44,7 +44,15 @@ int main(int argc, char **argv)
     vector<string> vstrImageFilenames;
     vector<double> vTimestamps;
     string strFile = string(argv[3])+"/rgb.txt";
+    // if strFile not exist, print error message and exit
+    if(!ifstream(strFile))
+    {
+        cerr << "Cannot find rgb.txt at " << strFile << ", please check the path!" << endl;
+        return 1;
+    }
     LoadImages(strFile, vstrImageFilenames, vTimestamps);
+
+    std::string filename = string(argv[4]);
 
     int nImages = vstrImageFilenames.size();
 
@@ -103,6 +111,11 @@ int main(int argc, char **argv)
     // Stop all threads
     SLAM.Shutdown();
 
+    const std::string kf_filename = "kf_" + filename + ".txt";
+    const std::string f_filename = "f_" + filename + ".txt";
+    SLAM.SaveKeyFrameTrajectoryEuRoC(f_filename);
+    SLAM.SaveKeyFrameTrajectoryTUM(kf_filename);
+
     // Tracking time statistics
     sort(vTimesTrack.begin(),vTimesTrack.end());
     float totaltime = 0;
@@ -115,7 +128,7 @@ int main(int argc, char **argv)
     cout << "mean tracking time: " << totaltime/nImages << endl;
 
     // Save camera trajectory
-    SLAM.SaveKeyFrameTrajectoryTUM("KeyFrameTrajectory.txt");
+    // SLAM.SaveKeyFrameTrajectoryTUM("KeyFrameTrajectory.txt");
 
     return 0;
 }
