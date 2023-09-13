@@ -3,7 +3,7 @@
 
 set -e # Exit immediately if a command exits with a non-zero status.
 
-if [ "$#" -lt 1 ]; then
+if [ "$#" -lt 2 ]; then
     echo "Usage: $0 --input-dir <input-dir> [--verbose] [--output-dir <output-dir>]"
     exit 1
 fi
@@ -63,10 +63,16 @@ launch_mono_tum() {
     for i in {1..10}; do
         num2d=$(printf "%02d" "$i")
         outputfile=$(basename "$dir")_${num2d}
-        outputfile=${output_dir}/${outputfile}
         # override the saving to echo command each time
         echo -e "\e[K $command $outputfile"
         $command $outputfile
+
+        plotpath="$output_dir"/plot_${outputfile}.png
+        resultpath="$output_dir"/path_${outputfile}
+
+        evo_cmd="./Examples/ROS/evaluate_ape.py $dir/groundtruth.txt f_$outputfile.txt -as -r full -va -p --plot_mode xy --save_plot ${plotpath} --save_results ${resultpath}"
+        echo -e "\e[K $evo_cmd"
+        $evo_cmd
     done
 }
 
