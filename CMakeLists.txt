@@ -74,7 +74,7 @@ endif()
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
-find_package(OpenCV 4.0 COMPONENTS core features2d highgui imgproc imgcodecs)
+find_package(OpenCV 4.0 COMPONENTS core features2d calib3d highgui imgproc imgcodecs)
 if(NOT OpenCV_FOUND)
   find_package(OpenCV 3.0)
   if(NOT OpenCV_FOUND)
@@ -168,7 +168,7 @@ function(compile targetName cppFiles)
     include/MLPnPsolver.h
     include/TwoViewReconstruction.h
     include/Config.h
-    )
+    ${cppFiles})
 
   target_include_directories(${targetName} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
