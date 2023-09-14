@@ -117,7 +117,7 @@ launch_mono_tum() {
         # remove first line in groundtruth.txt
         sed -i '1d' "$dir"/groundtruth.txt
 
-        evo_cmd="evo_ape tum $dir/groundtruth.txt $outputfileDir/kf_${outputfile}.txt -as -r full -va --plot_mode xy --save_plot ${plotpath} --save_results ${resultpath} --no_warnings"
+        evo_cmd="evo_ape tum $dir/groundtruth.txt $outputfileDir/kf_${outputfile}.txt -as -r full -va --plot_mode xy --save_plot ${plotpath} --save_results ${resultpath} --no_warnings --post_relation trans_part"
         echo -e "\e[K $evo_cmd"
         $evo_cmd
     done
