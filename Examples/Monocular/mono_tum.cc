@@ -57,7 +57,7 @@ int main(int argc, char **argv)
     int nImages = vstrImageFilenames.size();
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    ORB_SLAM3::System SLAM(argv[1],argv[2],ORB_SLAM3::System::MONOCULAR,true);
+    ORB_SLAM3::System SLAM(argv[1],argv[2],ORB_SLAM3::System::MONOCULAR,false);
 
     // Vector for tracking time statistics
     vector<float> vTimesTrack;
@@ -112,8 +112,8 @@ int main(int argc, char **argv)
     SLAM.Shutdown();
 
     const std::string kf_filename = "kf_" + filename + ".txt";
-    const std::string f_filename = "f_" + filename + ".txt";
-    SLAM.SaveKeyFrameTrajectoryEuRoC(f_filename);
+    // const std::string f_filename = "f_" + filename + ".txt";
+    // SLAM.SaveTrajectoryTUM(f_filename);
     SLAM.SaveKeyFrameTrajectoryTUM(kf_filename);
 
     // Tracking time statistics

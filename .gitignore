@@ -80,3 +80,6 @@ cmake-build-*
 *.pdf
 
 *.csv
+
+rundatacollection/
+.vscode/
