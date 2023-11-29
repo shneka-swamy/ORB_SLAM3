@@ -27,6 +27,7 @@
 #include "ORBmatcher.h"
 
 #include "Thirdparty/DBoW2/DUtils/Random.h"
+#include "System.h"
 
 namespace ORB_SLAM3
 {
@@ -377,7 +378,7 @@ void Sim3Solver::ComputeSim3(Eigen::Matrix3f &P1, Eigen::Matrix3f &P2)
         double cvnom = Converter::toCvMat(Pr1).dot(Converter::toCvMat(P3));
         double nom = (Pr1.array() * P3.array()).sum();
         if (abs(nom-cvnom)>1e-3)
-            std::cout << "sim3 solver: " << abs(nom-cvnom) << std::endl << nom << std::endl;
+            Verbose::PrintMess("sim3 solver: " + std::to_string(abs(nom-cvnom)) + "\n" + std::to_string(nom) + "\n", Verbose::VERBOSITY_CERR);
         Eigen::Array<float,3,3> aux_P3;
         aux_P3 = P3.array() * P3.array();
         double den = aux_P3.sum();

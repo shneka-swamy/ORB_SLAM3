@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.12.1)
 project(Sophus VERSION 1.1.0)
 
 include(CMakePackageConfigHelpers)
@@ -73,8 +73,10 @@ endif (MSVC)
 if(TARGET Eigen3::Eigen)
   target_link_libraries(sophus INTERFACE Eigen3::Eigen)
   set(Eigen3_DEPENDENCY "find_dependency (Eigen3 ${Eigen3_VERSION})")
+  target_compile_options(sophus INTERFACE -Wno-deprecated-declarations)
 else(TARGET Eigen3::Eigen)
   target_include_directories (sophus SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
+  target_compile_options(sophus INTERFACE -Wno-deprecated-declarations)
 endif(TARGET Eigen3::Eigen)
 
 # Associate target with include directory

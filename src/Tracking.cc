@@ -58,14 +58,14 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
         bool b_parse_cam = ParseCamParamFile(fSettings);
         if(!b_parse_cam)
         {
-            std::cout << "*Error with the camera parameters in the config file*" << std::endl;
+            Verbose::PrintMess("Error with the camera parameters in the config file", Verbose::VERBOSITY_CERR);
         }
 
         // Load ORB parameters
         bool b_parse_orb = ParseORBParamFile(fSettings);
         if(!b_parse_orb)
         {
-            std::cout << "*Error with the ORB parameters in the config file*" << std::endl;
+            Verbose::PrintMess("Error with the ORB parameters in the config file", Verbose::VERBOSITY_CERR);
         }
 
         bool b_parse_imu = true;
@@ -74,7 +74,7 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
             b_parse_imu = ParseIMUParamFile(fSettings);
             if(!b_parse_imu)
             {
-                std::cout << "*Error with the IMU parameters in the config file*" << std::endl;
+                Verbose::PrintMess("Error with the IMU parameters in the config file", Verbose::VERBOSITY_CERR);
             }
 
             mnFramesToResetIMU = mMaxFrames;
@@ -82,15 +82,7 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
 
         if(!b_parse_cam || !b_parse_orb || !b_parse_imu)
         {
-            std::cerr << "**ERROR in the config file, the format is not correct**" << std::endl;
-            try
-            {
-                throw -1;
-            }
-            catch(exception &e)
-            {
-
-            }
+            Verbose::PrintMess("Error in the config file, the format is not correct", Verbose::VERBOSITY_CERR);
         }
     }
 
@@ -99,22 +91,24 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
     mnNumDataset = 0;
 
     vector<GeometricCamera*> vpCams = mpAtlas->GetAllCameras();
-    std::cout << "There are " << vpCams.size() << " cameras in the atlas" << std::endl;
+    Verbose::PrintMess("There are " + to_string(vpCams.size()) + " cameras in the atlas", Verbose::VERBOSITY_COUT);
     for(GeometricCamera* pCam : vpCams)
     {
-        std::cout << "Camera " << pCam->GetId();
-        if(pCam->GetType() == GeometricCamera::CAM_PINHOLE)
+        std::stringstream ss;
+        ss << "Camera " << pCam->GetId();
+        if (pCam->GetType() == GeometricCamera::CAM_PINHOLE)
         {
-            std::cout << " is pinhole" << std::endl;
+            ss << " is pinhole";
         }
-        else if(pCam->GetType() == GeometricCamera::CAM_FISHEYE)
+        else if (pCam->GetType() == GeometricCamera::CAM_FISHEYE)
         {
-            std::cout << " is fisheye" << std::endl;
+            ss << " is fisheye";
         }
         else
         {
-            std::cout << " is unknown" << std::endl;
+            ss << " is unknown";
         }
+        Verbose::PrintMess(ss.str(), Verbose::VERBOSITY_COUT);
     }
 
 #ifdef REGISTER_TIMES
@@ -751,21 +745,20 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
 
         mpCamera = mpAtlas->AddCamera(mpCamera);
 
-        std::cout << "- Camera: Pinhole" << std::endl;
-        std::cout << "- Image scale: " << mImageScale << std::endl;
-        std::cout << "- fx: " << fx << std::endl;
-        std::cout << "- fy: " << fy << std::endl;
-        std::cout << "- cx: " << cx << std::endl;
-        std::cout << "- cy: " << cy << std::endl;
-        std::cout << "- k1: " << mDistCoef.at<float>(0) << std::endl;
-        std::cout << "- k2: " << mDistCoef.at<float>(1) << std::endl;
+        Verbose::PrintMess("- Camera: Pinhole", Verbose::VERBOSITY_COUT);
+        Verbose::PrintMess("- Image scale: " + to_string(mImageScale), Verbose::VERBOSITY_COUT);
+        Verbose::PrintMess("- fx: " + to_string(fx), Verbose::VERBOSITY_COUT);
+        Verbose::PrintMess("- fy: " + to_string(fy), Verbose::VERBOSITY_COUT);
+        Verbose::PrintMess("- cx: " + to_string(cx), Verbose::VERBOSITY_COUT);
+        Verbose::PrintMess("- cy: " + to_string(cy), Verbose::VERBOSITY_COUT);
+        Verbose::PrintMess("- k1: " + to_string(mDistCoef.at<float>(0)), Verbose::VERBOSITY_COUT);
+        Verbose::PrintMess("- k2: " + to_string(mDistCoef.at<float>(1)), Verbose::VERBOSITY_COUT);
 
-
-        std::cout << "- p1: " << mDistCoef.at<float>(2) << std::endl;
-        std::cout << "- p2: " << mDistCoef.at<float>(3) << std::endl;
+        Verbose::PrintMess("- p1: " + to_string(mDistCoef.at<float>(2)), Verbose::VERBOSITY_COUT);
+        Verbose::PrintMess("- p2: " + to_string(mDistCoef.at<float>(3)), Verbose::VERBOSITY_COUT);
 
         if(mDistCoef.rows==5)
-            std::cout << "- k3: " << mDistCoef.at<float>(4) << std::endl;
+            Verbose::PrintMess("- k3: " + to_string(mDistCoef.at<float>(4)), Verbose::VERBOSITY_COUT);
 
         mK = cv::Mat::eye(3,3,CV_32F);
         mK.at<float>(0,0) = fx;
@@ -793,7 +786,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
         }
         else
         {
-            std::cerr << "*Camera.fx parameter doesn't exist or is not a real number*" << std::endl;
+            Verbose::PrintMess("*Camera.fx parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
             b_miss_params = true;
         }
         node = fSettings["Camera.fy"];
@@ -803,7 +796,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
         }
         else
         {
-            std::cerr << "*Camera.fy parameter doesn't exist or is not a real number*" << std::endl;
+            Verbose::PrintMess("*Camera.fy parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
             b_miss_params = true;
         }
 
@@ -814,7 +807,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
         }
         else
         {
-            std::cerr << "*Camera.cx parameter doesn't exist or is not a real number*" << std::endl;
+            Verbose::PrintMess("*Camera.cx parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
             b_miss_params = true;
         }
 
@@ -825,7 +818,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
         }
         else
         {
-            std::cerr << "*Camera.cy parameter doesn't exist or is not a real number*" << std::endl;
+            Verbose::PrintMess("*Camera.cy parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
             b_miss_params = true;
         }
 
@@ -837,7 +830,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
         }
         else
         {
-            std::cerr << "*Camera.k1 parameter doesn't exist or is not a real number*" << std::endl;
+            Verbose::PrintMess("*Camera.k1 parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
             b_miss_params = true;
         }
         node = fSettings["Camera.k2"];
@@ -847,7 +840,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
         }
         else
         {
-            std::cerr << "*Camera.k2 parameter doesn't exist or is not a real number*" << std::endl;
+            Verbose::PrintMess("*Camera.k2 parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
             b_miss_params = true;
         }
 
@@ -858,7 +851,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
         }
         else
         {
-            std::cerr << "*Camera.k3 parameter doesn't exist or is not a real number*" << std::endl;
+            Verbose::PrintMess("*Camera.k3 parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
             b_miss_params = true;
         }
 
@@ -869,7 +862,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
         }
         else
         {
-            std::cerr << "*Camera.k4 parameter doesn't exist or is not a real number*" << std::endl;
+            Verbose::PrintMess("*Camera.k4 parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
             b_miss_params = true;
         }
 
@@ -893,16 +886,16 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
             vector<float> vCamCalib{fx,fy,cx,cy,k1,k2,k3,k4};
             mpCamera = new KannalaBrandt8(vCamCalib);
             mpCamera = mpAtlas->AddCamera(mpCamera);
-            std::cout << "- Camera: Fisheye" << std::endl;
-            std::cout << "- Image scale: " << mImageScale << std::endl;
-            std::cout << "- fx: " << fx << std::endl;
-            std::cout << "- fy: " << fy << std::endl;
-            std::cout << "- cx: " << cx << std::endl;
-            std::cout << "- cy: " << cy << std::endl;
-            std::cout << "- k1: " << k1 << std::endl;
-            std::cout << "- k2: " << k2 << std::endl;
-            std::cout << "- k3: " << k3 << std::endl;
-            std::cout << "- k4: " << k4 << std::endl;
+            Verbose::PrintMess("- Camera: KannalaBrandt8 (Fisheye)", Verbose::VERBOSITY_COUT);
+            Verbose::PrintMess("- Image scale: " + to_string(mImageScale), Verbose::VERBOSITY_COUT);
+            Verbose::PrintMess("- fx: " + to_string(fx), Verbose::VERBOSITY_COUT);
+            Verbose::PrintMess("- fy: " + to_string(fy), Verbose::VERBOSITY_COUT);
+            Verbose::PrintMess("- cx: " + to_string(cx), Verbose::VERBOSITY_COUT);
+            Verbose::PrintMess("- cy: " + to_string(cy), Verbose::VERBOSITY_COUT);
+            Verbose::PrintMess("- k1: " + to_string(k1), Verbose::VERBOSITY_COUT);
+            Verbose::PrintMess("- k2: " + to_string(k2), Verbose::VERBOSITY_COUT);
+            Verbose::PrintMess("- k3: " + to_string(k3), Verbose::VERBOSITY_COUT);
+            Verbose::PrintMess("- k4: " + to_string(k4), Verbose::VERBOSITY_COUT);
 
             mK = cv::Mat::eye(3,3,CV_32F);
             mK.at<float>(0,0) = fx;
@@ -927,7 +920,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
             }
             else
             {
-                std::cerr << "*Camera2.fx parameter doesn't exist or is not a real number*" << std::endl;
+                Verbose::PrintMess("*Camera2.fx parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
                 b_miss_params = true;
             }
             node = fSettings["Camera2.fy"];
@@ -937,7 +930,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
             }
             else
             {
-                std::cerr << "*Camera2.fy parameter doesn't exist or is not a real number*" << std::endl;
+                Verbose::PrintMess("*Camera2.fy parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
                 b_miss_params = true;
             }
 
@@ -948,7 +941,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
             }
             else
             {
-                std::cerr << "*Camera2.cx parameter doesn't exist or is not a real number*" << std::endl;
+                Verbose::PrintMess("*Camera2.cx parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
                 b_miss_params = true;
             }
 
@@ -959,7 +952,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
             }
             else
             {
-                std::cerr << "*Camera2.cy parameter doesn't exist or is not a real number*" << std::endl;
+                Verbose::PrintMess("*Camera2.cy parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
                 b_miss_params = true;
             }
 
@@ -971,7 +964,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
             }
             else
             {
-                std::cerr << "*Camera2.k1 parameter doesn't exist or is not a real number*" << std::endl;
+                Verbose::PrintMess("*Camera2.k1 parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
                 b_miss_params = true;
             }
             node = fSettings["Camera2.k2"];
@@ -981,7 +974,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
             }
             else
             {
-                std::cerr << "*Camera2.k2 parameter doesn't exist or is not a real number*" << std::endl;
+                Verbose::PrintMess("*Camera2.k2 parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
                 b_miss_params = true;
             }
 
@@ -992,7 +985,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
             }
             else
             {
-                std::cerr << "*Camera2.k3 parameter doesn't exist or is not a real number*" << std::endl;
+                Verbose::PrintMess("*Camera2.k3 parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
                 b_miss_params = true;
             }
 
@@ -1003,7 +996,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
             }
             else
             {
-                std::cerr << "*Camera2.k4 parameter doesn't exist or is not a real number*" << std::endl;
+                Verbose::PrintMess("*Camera2.k4 parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
                 b_miss_params = true;
             }
 
@@ -1021,7 +1014,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
             }
             else
             {
-                std::cout << "WARNING: Camera.lappingBegin not correctly defined" << std::endl;
+                Verbose::PrintMess("*Camera.lappingBegin not correctly defined*", Verbose::VERBOSITY_CERR);
             }
             node = fSettings["Camera.lappingEnd"];
             if(!node.empty() && node.isInt())
@@ -1030,7 +1023,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
             }
             else
             {
-                std::cout << "WARNING: Camera.lappingEnd not correctly defined" << std::endl;
+                Verbose::PrintMess("*Camera.lappingEnd not correctly defined*", Verbose::VERBOSITY_CERR);
             }
             node = fSettings["Camera2.lappingBegin"];
             if(!node.empty() && node.isInt())
@@ -1039,7 +1032,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
             }
             else
             {
-                std::cout << "WARNING: Camera2.lappingBegin not correctly defined" << std::endl;
+                Verbose::PrintMess("*Camera2.lappingBegin not correctly defined*", Verbose::VERBOSITY_CERR);
             }
             node = fSettings["Camera2.lappingEnd"];
             if(!node.empty() && node.isInt())
@@ -1048,7 +1041,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
             }
             else
             {
-                std::cout << "WARNING: Camera2.lappingEnd not correctly defined" << std::endl;
+                Verbose::PrintMess("*Camera2.lappingEnd not correctly defined*", Verbose::VERBOSITY_CERR);
             }
 
             node = fSettings["Tlr"];
@@ -1058,13 +1051,13 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
                 cvTlr = node.mat();
                 if(cvTlr.rows != 3 || cvTlr.cols != 4)
                 {
-                    std::cerr << "*Tlr matrix have to be a 3x4 transformation matrix*" << std::endl;
+                    Verbose::PrintMess("*Tlr matrix have to be a 3x4 transformation matrix*", Verbose::VERBOSITY_CERR);
                     b_miss_params = true;
                 }
             }
             else
             {
-                std::cerr << "*Tlr matrix doesn't exist*" << std::endl;
+                Verbose::PrintMess("*Tlr matrix doesn't exist*", Verbose::VERBOSITY_CERR);
                 b_miss_params = true;
             }
 
@@ -1098,23 +1091,22 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
                 static_cast<KannalaBrandt8*>(mpCamera2)->mvLappingArea[0] = rightLappingBegin;
                 static_cast<KannalaBrandt8*>(mpCamera2)->mvLappingArea[1] = rightLappingEnd;
 
-                std::cout << "- Camera1 Lapping: " << leftLappingBegin << ", " << leftLappingEnd << std::endl;
-
-                std::cout << std::endl << "Camera2 Parameters:" << std::endl;
-                std::cout << "- Camera: Fisheye" << std::endl;
-                std::cout << "- Image scale: " << mImageScale << std::endl;
-                std::cout << "- fx: " << fx << std::endl;
-                std::cout << "- fy: " << fy << std::endl;
-                std::cout << "- cx: " << cx << std::endl;
-                std::cout << "- cy: " << cy << std::endl;
-                std::cout << "- k1: " << k1 << std::endl;
-                std::cout << "- k2: " << k2 << std::endl;
-                std::cout << "- k3: " << k3 << std::endl;
-                std::cout << "- k4: " << k4 << std::endl;
-
-                std::cout << "- mTlr: \n" << cvTlr << std::endl;
-
-                std::cout << "- Camera2 Lapping: " << rightLappingBegin << ", " << rightLappingEnd << std::endl;
+                std::stringstream ss;
+                ss << "- Camera1 Lapping: " << leftLappingBegin << ", " << leftLappingEnd << std::endl;
+                ss << std::endl << "Camera2 Parameters:" << std::endl;
+                ss << "- Camera: Fisheye" << std::endl;
+                ss << "- Image scale: " << mImageScale << std::endl;
+                ss << "- fx: " << fx << std::endl;
+                ss << "- fy: " << fy << std::endl;
+                ss << "- cx: " << cx << std::endl;
+                ss << "- cy: " << cy << std::endl;
+                ss << "- k1: " << k1 << std::endl;
+                ss << "- k2: " << k2 << std::endl;
+                ss << "- k3: " << k3 << std::endl;
+                ss << "- k4: " << k4 << std::endl;
+                ss << "- mTlr: \n" << cvTlr << std::endl;
+                ss << "- Camera2 Lapping: " << rightLappingBegin << ", " << rightLappingEnd << std::endl;
+                Verbose::PrintMess(ss.str(), Verbose::VERBOSITY_COUT);
             }
         }
 
@@ -1126,8 +1118,8 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
     }
     else
     {
-        std::cerr << "*Not Supported Camera Sensor*" << std::endl;
-        std::cerr << "Check an example configuration file with the desired sensor" << std::endl;
+        Verbose::PrintMess("*Not Supported Camera Sensor*", Verbose::VERBOSITY_CERR);
+        Verbose::PrintMess("Check an example configuration file with the desired sensor", Verbose::VERBOSITY_CERR);
     }
 
     if(mSensor==System::STEREO || mSensor==System::RGBD || mSensor==System::IMU_STEREO || mSensor==System::IMU_RGBD )
@@ -1143,7 +1135,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
         }
         else
         {
-            std::cerr << "*Camera.bf parameter doesn't exist or is not a real number*" << std::endl;
+            Verbose::PrintMess("*Camera.bf parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
             b_miss_params = true;
         }
 
@@ -1157,16 +1149,16 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
     mMinFrames = 0;
     mMaxFrames = fps;
 
-    cout << "- fps: " << fps << endl;
+    Verbose::PrintMess("- fps: " + to_string(fps), Verbose::VERBOSITY_COUT);
 
 
     int nRGB = fSettings["Camera.RGB"];
     mbRGB = nRGB;
 
     if(mbRGB)
-        cout << "- color order: RGB (ignored if grayscale)" << endl;
+        Verbose::PrintMess("- color order: RGB (ignored if grayscale)", Verbose::VERBOSITY_COUT);
     else
-        cout << "- color order: BGR (ignored if grayscale)" << endl;
+        Verbose::PrintMess("- color order: BGR (ignored if grayscale)", Verbose::VERBOSITY_COUT);
 
     if(mSensor==System::STEREO || mSensor==System::RGBD || mSensor==System::IMU_STEREO || mSensor==System::IMU_RGBD)
     {
@@ -1176,11 +1168,11 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
         {
             mThDepth = node.real();
             mThDepth = mbf*mThDepth/fx;
-            cout << endl << "Depth Threshold (Close/Far Points): " << mThDepth << endl;
+            Verbose::PrintMess("Depth Threshold (Close/Far Points): " + to_string(mThDepth), Verbose::VERBOSITY_COUT);
         }
         else
         {
-            std::cerr << "*ThDepth parameter doesn't exist or is not a real number*" << std::endl;
+            Verbose::PrintMess("*ThDepth parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
             b_miss_params = true;
         }
 
@@ -1200,7 +1192,7 @@ bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
         }
         else
         {
-            std::cerr << "*DepthMapFactor parameter doesn't exist or is not a real number*" << std::endl;
+            Verbose::PrintMess("*DepthMapFactor parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
             b_miss_params = true;
         }
 
@@ -1227,7 +1219,7 @@ bool Tracking::ParseORBParamFile(cv::FileStorage &fSettings)
     }
     else
     {
-        std::cerr << "*ORBextractor.nFeatures parameter doesn't exist or is not an integer*" << std::endl;
+        Verbose::PrintMess("*ORBextractor.nFeatures parameter doesn't exist or is not an integer*", Verbose::VERBOSITY_CERR);
         b_miss_params = true;
     }
 
@@ -1238,7 +1230,7 @@ bool Tracking::ParseORBParamFile(cv::FileStorage &fSettings)
     }
     else
     {
-        std::cerr << "*ORBextractor.scaleFactor parameter doesn't exist or is not a real number*" << std::endl;
+        Verbose::PrintMess("*ORBextractor.scaleFactor parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
         b_miss_params = true;
     }
 
@@ -1249,7 +1241,7 @@ bool Tracking::ParseORBParamFile(cv::FileStorage &fSettings)
     }
     else
     {
-        std::cerr << "*ORBextractor.nLevels parameter doesn't exist or is not an integer*" << std::endl;
+        Verbose::PrintMess("*ORBextractor.nLevels parameter doesn't exist or is not an integer*", Verbose::VERBOSITY_CERR);
         b_miss_params = true;
     }
 
@@ -1260,7 +1252,7 @@ bool Tracking::ParseORBParamFile(cv::FileStorage &fSettings)
     }
     else
     {
-        std::cerr << "*ORBextractor.iniThFAST parameter doesn't exist or is not an integer*" << std::endl;
+        Verbose::PrintMess("*ORBextractor.iniThFAST parameter doesn't exist or is not an integer*", Verbose::VERBOSITY_CERR);
         b_miss_params = true;
     }
 
@@ -1271,7 +1263,7 @@ bool Tracking::ParseORBParamFile(cv::FileStorage &fSettings)
     }
     else
     {
-        std::cerr << "*ORBextractor.minThFAST parameter doesn't exist or is not an integer*" << std::endl;
+        Verbose::PrintMess("*ORBextractor.minThFAST parameter doesn't exist or is not an integer*", Verbose::VERBOSITY_CERR);
         b_miss_params = true;
     }
 
@@ -1288,12 +1280,14 @@ bool Tracking::ParseORBParamFile(cv::FileStorage &fSettings)
     if(mSensor==System::MONOCULAR || mSensor==System::IMU_MONOCULAR)
         mpIniORBextractor = new ORBextractor(5*nFeatures,fScaleFactor,nLevels,fIniThFAST,fMinThFAST);
 
-    cout << endl << "ORB Extractor Parameters: " << endl;
-    cout << "- Number of Features: " << nFeatures << endl;
-    cout << "- Scale Levels: " << nLevels << endl;
-    cout << "- Scale Factor: " << fScaleFactor << endl;
-    cout << "- Initial Fast Threshold: " << fIniThFAST << endl;
-    cout << "- Minimum Fast Threshold: " << fMinThFAST << endl;
+    std::stringstream ss;
+    ss << endl << "ORB Extractor Parameters: " << endl;
+    ss << "- Number of Features: " << nFeatures << endl;
+    ss << "- Scale Levels: " << nLevels << endl;
+    ss << "- Scale Factor: " << fScaleFactor << endl;
+    ss << "- Initial Fast Threshold: " << fIniThFAST << endl;
+    ss << "- Minimum Fast Threshold: " << fMinThFAST << endl;
+    Verbose::PrintMess(ss.str(), Verbose::VERBOSITY_COUT);
 
     return true;
 }
@@ -1309,17 +1303,21 @@ bool Tracking::ParseIMUParamFile(cv::FileStorage &fSettings)
         cvTbc = node.mat();
         if(cvTbc.rows != 4 || cvTbc.cols != 4)
         {
-            std::cerr << "*Tbc matrix have to be a 4x4 transformation matrix*" << std::endl;
+            Verbose::PrintMess("*Tbc matrix have to be a 4x4 transformation matrix*", Verbose::VERBOSITY_CERR);
             b_miss_params = true;
         }
     }
     else
     {
-        std::cerr << "*Tbc matrix doesn't exist*" << std::endl;
+        Verbose::PrintMess("*Tbc matrix doesn't exist*", Verbose::VERBOSITY_CERR);
         b_miss_params = true;
     }
-    cout << endl;
-    cout << "Left camera to Imu Transform (Tbc): " << endl << cvTbc << endl;
+    {
+        std::stringstream ss;
+        ss << endl;
+        ss << "Left camera to Imu Transform (Tbc): " << endl << cvTbc << endl;
+        Verbose::PrintMess(ss.str(), Verbose::VERBOSITY_COUT);
+    }
     Eigen::Matrix<float,4,4,Eigen::RowMajor> eigTbc(cvTbc.ptr<float>(0));
     Sophus::SE3f Tbc(eigTbc);
 
@@ -1331,7 +1329,7 @@ bool Tracking::ParseIMUParamFile(cv::FileStorage &fSettings)
     }
 
     if(!mInsertKFsLost)
-        cout << "Do not insert keyframes when lost visual tracking " << endl;
+        Verbose::PrintMess("Do not insert keyframes when lost visual tracking", Verbose::VERBOSITY_COUT);
 
 
 
@@ -1345,7 +1343,7 @@ bool Tracking::ParseIMUParamFile(cv::FileStorage &fSettings)
     }
     else
     {
-        std::cerr << "*IMU.Frequency parameter doesn't exist or is not an integer*" << std::endl;
+        Verbose::PrintMess("*IMU.Frequency parameter doesn't exist or is not an integer*", Verbose::VERBOSITY_CERR);
         b_miss_params = true;
     }
 
@@ -1356,7 +1354,7 @@ bool Tracking::ParseIMUParamFile(cv::FileStorage &fSettings)
     }
     else
     {
-        std::cerr << "*IMU.NoiseGyro parameter doesn't exist or is not a real number*" << std::endl;
+        Verbose::PrintMess("*IMU.NoiseGyro parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
         b_miss_params = true;
     }
 
@@ -1367,7 +1365,7 @@ bool Tracking::ParseIMUParamFile(cv::FileStorage &fSettings)
     }
     else
     {
-        std::cerr << "*IMU.NoiseAcc parameter doesn't exist or is not a real number*" << std::endl;
+        Verbose::PrintMess("*IMU.NoiseAcc parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
         b_miss_params = true;
     }
 
@@ -1378,7 +1376,7 @@ bool Tracking::ParseIMUParamFile(cv::FileStorage &fSettings)
     }
     else
     {
-        std::cerr << "*IMU.GyroWalk parameter doesn't exist or is not a real number*" << std::endl;
+        Verbose::PrintMess("*IMU.GyroWalk parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
         b_miss_params = true;
     }
 
@@ -1389,7 +1387,7 @@ bool Tracking::ParseIMUParamFile(cv::FileStorage &fSettings)
     }
     else
     {
-        std::cerr << "*IMU.AccWalk parameter doesn't exist or is not a real number*" << std::endl;
+        Verbose::PrintMess("*IMU.AccWalk parameter doesn't exist or is not a real number*", Verbose::VERBOSITY_CERR);
         b_miss_params = true;
     }
 
@@ -1401,7 +1399,7 @@ bool Tracking::ParseIMUParamFile(cv::FileStorage &fSettings)
     }
 
     if(mFastInit)
-        cout << "Fast IMU initialization. Acceleration is not checked \n";
+        Verbose::PrintMess("Fast IMU initialization. Acceleration is not checked", Verbose::VERBOSITY_COUT);
 
     if(b_miss_params)
     {
@@ -1409,13 +1407,16 @@ bool Tracking::ParseIMUParamFile(cv::FileStorage &fSettings)
     }
 
     const float sf = sqrt(mImuFreq);
-    cout << endl;
-    cout << "IMU frequency: " << mImuFreq << " Hz" << endl;
-    cout << "IMU gyro noise: " << Ng << " rad/s/sqrt(Hz)" << endl;
-    cout << "IMU gyro walk: " << Ngw << " rad/s^2/sqrt(Hz)" << endl;
-    cout << "IMU accelerometer noise: " << Na << " m/s^2/sqrt(Hz)" << endl;
-    cout << "IMU accelerometer walk: " << Naw << " m/s^3/sqrt(Hz)" << endl;
-
+    {
+        std::stringstream ss;
+        ss << endl;
+        ss << "IMU frequency: " << mImuFreq << " Hz" << endl;
+        ss << "IMU gyro noise: " << Ng << " rad/s/sqrt(Hz)" << endl;
+        ss << "IMU gyro walk: " << Ngw << " rad/s^2/sqrt(Hz)" << endl;
+        ss << "IMU accelerometer noise: " << Na << " m/s^2/sqrt(Hz)" << endl;
+        ss << "IMU accelerometer walk: " << Naw << " m/s^3/sqrt(Hz)" << endl;
+        Verbose::PrintMess(ss.str(), Verbose::VERBOSITY_COUT);
+    }
     mpImuCalib = new IMU::Calib(Tbc,Ng*sf,Na*sf,Ngw/sf,Naw/sf);
 
     mpImuPreintegratedFromLastKF = new IMU::Preintegrated(IMU::Bias(),*mpImuCalib);
@@ -1676,7 +1677,7 @@ void Tracking::PreintegrateIMU()
 
     const int n = mvImuFromLastFrame.size()-1;
     if(n==0){
-        cout << "Empty IMU measurements vector!!!\n";
+        Verbose::PrintMess("Empty IMU measurements vector!!!", Verbose::VERBOSITY_COUT);
         return;
     }
 
@@ -1720,7 +1721,7 @@ void Tracking::PreintegrateIMU()
         }
 
         if (!mpImuPreintegratedFromLastKF)
-            cout << "mpImuPreintegratedFromLastKF does not exist" << endl;
+            Verbose::PrintMess("mpImuPreintegratedFromLastKF does not exist", Verbose::VERBOSITY_COUT);
         mpImuPreintegratedFromLastKF->IntegrateNewMeasurement(acc,angVel,tstep);
         pImuPreintegratedFromLastFrame->IntegrateNewMeasurement(acc,angVel,tstep);
     }
@@ -1780,7 +1781,7 @@ bool Tracking::PredictStateIMU()
         return true;
     }
     else
-        cout << "not IMU prediction!!" << endl;
+        Verbose::PrintMess("not IMU prediction!!", Verbose::VERBOSITY_COUT);
 
     return false;
 }
@@ -1796,7 +1797,7 @@ void Tracking::Track()
 
     if (bStepByStep)
     {
-        std::cout << "Tracking: Waiting to the next step" << std::endl;
+        Verbose::PrintMess("Tracking: Waiting to the next step", Verbose::VERBOSITY_COUT);
         while(!mbStep && bStepByStep)
             usleep(500);
         mbStep = false;
@@ -1804,7 +1805,7 @@ void Tracking::Track()
 
     if(mpLocalMapper->mbBadImu)
     {
-        cout << "TRACK: Reset map because local mapper set the bad imu flag " << endl;
+        Verbose::PrintMess("TRACK: Reset map because local mapper set the bad imu flag ", Verbose::VERBOSITY_COUT);
         mpSystem->ResetActiveMap();
         return;
     }
@@ -1812,14 +1813,14 @@ void Tracking::Track()
     Map* pCurrentMap = mpAtlas->GetCurrentMap();
     if(!pCurrentMap)
     {
-        cout << "ERROR: There is not an active map in the atlas" << endl;
+        Verbose::PrintMess("ERROR: There is not an active map in the atlas", Verbose::VERBOSITY_CERR);
     }
 
     if(mState!=NO_IMAGES_YET)
     {
         if(mLastFrame.mTimeStamp>mCurrentFrame.mTimeStamp)
         {
-            cerr << "ERROR: Frame with a timestamp older than previous frame detected!" << endl;
+            Verbose::PrintMess("ERROR: Frame with a timestamp older than previous frame detected!", Verbose::VERBOSITY_CERR);
             unique_lock<mutex> lock(mMutexImuQueue);
             mlQueueImuData.clear();
             CreateMapInAtlas();
@@ -1834,7 +1835,7 @@ void Tracking::Track()
 
                 if(mpAtlas->isImuInitialized())
                 {
-                    cout << "Timestamp jump detected. State set to LOST. Reseting IMU integration..." << endl;
+                    Verbose::PrintMess("Timestamp jump detected. State set to LOST. Reseting IMU integration...", Verbose::VERBOSITY_COUT);
                     if(!pCurrentMap->GetIniertialBA2())
                     {
                         mpSystem->ResetActiveMap();
@@ -1846,7 +1847,7 @@ void Tracking::Track()
                 }
                 else
                 {
-                    cout << "Timestamp jump detected, before IMU initialization. Reseting..." << endl;
+                    Verbose::PrintMess("Timestamp jump detected, before IMU initialization. Reseting...", Verbose::VERBOSITY_COUT);
                     mpSystem->ResetActiveMap();
                 }
                 return;
@@ -2127,8 +2128,8 @@ void Tracking::Track()
                 bOK = TrackLocalMap();
 
             }
-            if(!bOK)
-                cout << "Fail to track local map!" << endl;
+            // if(!bOK)
+            //     cout << "Fail to track local map!" << endl;
         }
         else
         {
@@ -2148,7 +2149,7 @@ void Tracking::Track()
                 Verbose::PrintMess("Track lost for less than one second...", Verbose::VERBOSITY_NORMAL);
                 if(!pCurrentMap->isImuInitialized() || !pCurrentMap->GetIniertialBA2())
                 {
-                    cout << "IMU is not or recently initialized. Reseting active map..." << endl;
+                    // cout << "IMU is not or recently initialized. Reseting active map..." << endl;
                     mpSystem->ResetActiveMap();
                 }
 
@@ -3881,7 +3882,7 @@ void Tracking::ResetActiveMap(bool bLocMap)
     list<bool> lbLost;
     // lbLost.reserve(mlbLost.size());
     unsigned int index = mnFirstFrameId;
-    cout << "mnFirstFrameId = " << mnFirstFrameId << endl;
+    // cout << "mnFirstFrameId = " << mnFirstFrameId << endl;
     for(Map* pMap : mpAtlas->GetAllMaps())
     {
         if(pMap->GetAllKeyFrames().size() > 0)
@@ -3893,7 +3894,7 @@ void Tracking::ResetActiveMap(bool bLocMap)
 
     //cout << "First Frame id: " << index << endl;
     int num_lost = 0;
-    cout << "mnInitialFrameId = " << mnInitialFrameId << endl;
+    // cout << "mnInitialFrameId = " << mnInitialFrameId << endl;
 
     for(list<bool>::iterator ilbL = mlbLost.begin(); ilbL != mlbLost.end(); ilbL++)
     {
@@ -3907,7 +3908,7 @@ void Tracking::ResetActiveMap(bool bLocMap)
 
         index++;
     }
-    cout << num_lost << " Frames set to lost" << endl;
+    // cout << num_lost << " Frames set to lost" << endl;
 
     mlbLost = lbLost;
 

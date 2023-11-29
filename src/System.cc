@@ -36,7 +36,7 @@
 namespace ORB_SLAM3
 {
 
-Verbose::eLevel Verbose::th = Verbose::VERBOSITY_NORMAL;
+Verbose::eLevel Verbose::th = Verbose::VERBOSITY_CERR;
 
 System::System(const string &strVocFile, const string &strSettingsFile, const eSensor sensor,
                const bool bUseViewer, const int initFr, const string &strSequence):
@@ -44,33 +44,33 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     mbActivateLocalizationMode(false), mbDeactivateLocalizationMode(false), mbShutDown(false)
 {
     // Output welcome message
-    cout << endl <<
-    "ORB-SLAM3 Copyright (C) 2017-2020 Carlos Campos, Richard Elvira, Juan J. Gómez, José M.M. Montiel and Juan D. Tardós, University of Zaragoza." << endl <<
-    "ORB-SLAM2 Copyright (C) 2014-2016 Raúl Mur-Artal, José M.M. Montiel and Juan D. Tardós, University of Zaragoza." << endl <<
-    "This program comes with ABSOLUTELY NO WARRANTY;" << endl  <<
-    "This is free software, and you are welcome to redistribute it" << endl <<
-    "under certain conditions. See LICENSE.txt." << endl << endl;
+    Verbose::PrintMess(
+    "ORB-SLAM3 Copyright (C) 2017-2020 Carlos Campos, Richard Elvira, Juan J. Gómez, José M.M. Montiel and Juan D. Tardós, University of Zaragoza.\n"
+    "ORB-SLAM2 Copyright (C) 2014-2016 Raúl Mur-Artal, José M.M. Montiel and Juan D. Tardós, University of Zaragoza.\n"
+    "This program comes with ABSOLUTELY NO WARRANTY;\n"
+    "This is free software, and you are welcome to redistribute it\n"
+    "under certain conditions. See LICENSE.txt.\n", Verbose::VERBOSITY_COUT);
 
-    cout << "Input sensor was set to: ";
+    Verbose::PrintMess("Input sensor was set to: ", Verbose::VERBOSITY_COUT);
 
     if(mSensor==MONOCULAR)
-        cout << "Monocular" << endl;
+        Verbose::PrintMess("Monocular", Verbose::VERBOSITY_COUT);
     else if(mSensor==STEREO)
-        cout << "Stereo" << endl;
+        Verbose::PrintMess("Stereo", Verbose::VERBOSITY_COUT);
     else if(mSensor==RGBD)
-        cout << "RGB-D" << endl;
+        Verbose::PrintMess("RGB-D", Verbose::VERBOSITY_COUT);
     else if(mSensor==IMU_MONOCULAR)
-        cout << "Monocular-Inertial" << endl;
+        Verbose::PrintMess("Monocular-Inertial", Verbose::VERBOSITY_COUT);
     else if(mSensor==IMU_STEREO)
-        cout << "Stereo-Inertial" << endl;
+        Verbose::PrintMess("Stereo-Inertial", Verbose::VERBOSITY_COUT);
     else if(mSensor==IMU_RGBD)
-        cout << "RGB-D-Inertial" << endl;
+        Verbose::PrintMess("RGB-D-Inertial", Verbose::VERBOSITY_COUT);
 
     //Check settings file
     cv::FileStorage fsSettings(strSettingsFile.c_str(), cv::FileStorage::READ);
     if(!fsSettings.isOpened())
     {
-       cerr << "Failed to open settings file at: " << strSettingsFile << endl;
+       Verbose::PrintMess("Failed to open settings file at: " + strSettingsFile, Verbose::VERBOSITY_CERR);
        exit(-1);
     }
 
@@ -81,7 +81,9 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
         mStrLoadAtlasFromFile = settings_->atlasLoadFile();
         mStrSaveAtlasToFile = settings_->atlasSaveFile();
 
-        cout << (*settings_) << endl;
+        std::stringstream settingStream;
+        settingStream << (*settings_);
+        Verbose::PrintMess(settingStream.str(), Verbose::VERBOSITY_COUT);
     }
     else{
         settings_ = nullptr;
@@ -112,59 +114,59 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     if(mStrLoadAtlasFromFile.empty())
     {
         //Load ORB Vocabulary
-        cout << endl << "Loading ORB Vocabulary. This could take a while..." << endl;
+        Verbose::PrintMess("Loading ORB Vocabulary. This could take a while...", Verbose::VERBOSITY_COUT);
 
         mpVocabulary = new ORBVocabulary();
         bool bVocLoad = mpVocabulary->loadFromTextFile(strVocFile);
         if(!bVocLoad)
         {
-            cerr << "Wrong path to vocabulary. " << endl;
-            cerr << "Falied to open at: " << strVocFile << endl;
+            Verbose::PrintMess("Wrong path to vocabulary. ", Verbose::VERBOSITY_CERR);
+            Verbose::PrintMess("Falied to open at: " + strVocFile, Verbose::VERBOSITY_CERR);
             exit(-1);
         }
-        cout << "Vocabulary loaded!" << endl << endl;
+        Verbose::PrintMess("Vocabulary loaded!", Verbose::VERBOSITY_COUT);
 
         //Create KeyFrame Database
         mpKeyFrameDatabase = new KeyFrameDatabase(*mpVocabulary);
 
         //Create the Atlas
-        cout << "Initialization of Atlas from scratch " << endl;
+        Verbose::PrintMess("Initialization of Atlas from scratch", Verbose::VERBOSITY_COUT);
         mpAtlas = new Atlas(0);
     }
     else
     {
         //Load ORB Vocabulary
-        cout << endl << "Loading ORB Vocabulary. This could take a while..." << endl;
+        Verbose::PrintMess("Loading ORB Vocabulary. This could take a while...", Verbose::VERBOSITY_COUT);
 
         mpVocabulary = new ORBVocabulary();
         bool bVocLoad = mpVocabulary->loadFromTextFile(strVocFile);
         if(!bVocLoad)
         {
-            cerr << "Wrong path to vocabulary. " << endl;
-            cerr << "Falied to open at: " << strVocFile << endl;
+            Verbose::PrintMess("Wrong path to vocabulary. ", Verbose::VERBOSITY_CERR);
+            Verbose::PrintMess("Falied to open at: " + strVocFile, Verbose::VERBOSITY_CERR);
             exit(-1);
         }
-        cout << "Vocabulary loaded!" << endl << endl;
+        Verbose::PrintMess("Vocabulary loaded!", Verbose::VERBOSITY_COUT);
 
         //Create KeyFrame Database
         mpKeyFrameDatabase = new KeyFrameDatabase(*mpVocabulary);
 
-        cout << "Load File" << endl;
+        Verbose::PrintMess("Load File", Verbose::VERBOSITY_COUT);
 
         // Load the file with an earlier session
         //clock_t start = clock();
-        cout << "Initialization of Atlas from file: " << mStrLoadAtlasFromFile << endl;
+        Verbose::PrintMess("Initialization of Atlas from file: " + mStrLoadAtlasFromFile, Verbose::VERBOSITY_COUT);
         bool isRead = LoadAtlas(FileType::BINARY_FILE);
 
         if(!isRead)
         {
-            cout << "Error to load the file, please try with other session file or vocabulary file" << endl;
+            Verbose::PrintMess("Error to load the file, please try with other session file or vocabulary file", Verbose::VERBOSITY_CERR);
             exit(-1);
         }
         //mpKeyFrameDatabase = new KeyFrameDatabase(*mpVocabulary);
 
 
-        //cout << "KF in DB: " << mpKeyFrameDatabase->mnNumKFs << "; words: " << mpKeyFrameDatabase->mnNumWords << endl;
+        //cout << "KF in DB: " << mpKeyFrameDatabase->mnNumKFs << "; words: " << mpKeyFrameDatabase->mnNumWords, Verbose::VERBOSITY_CERR);
 
         loadedAtlas = true;
 
@@ -172,7 +174,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
 
         //clock_t timeElapsed = clock() - start;
         //unsigned msElapsed = timeElapsed / (CLOCKS_PER_SEC / 1000);
-        //cout << "Binary file read in " << msElapsed << " ms" << endl;
+        //cout << "Binary file read in " << msElapsed << " ms", Verbose::VERBOSITY_CERR);
 
         //usleep(10*1000*1000);
     }
@@ -187,7 +189,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
 
     //Initialize the Tracking thread
     //(it will live in the main thread of execution, the one that called this constructor)
-    cout << "Seq. Name: " << strSequence << endl;
+    Verbose::PrintMess("Seq. Name: " + strSequence, Verbose::VERBOSITY_COUT);
     mpTracker = new Tracking(this, mpVocabulary, mpFrameDrawer, mpMapDrawer,
                              mpAtlas, mpKeyFrameDatabase, strSettingsFile, mSensor, settings_, strSequence);
 
@@ -202,7 +204,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
         mpLocalMapper->mThFarPoints = fsSettings["thFarPoints"];
     if(mpLocalMapper->mThFarPoints!=0)
     {
-        cout << "Discard points further than " << mpLocalMapper->mThFarPoints << " m from current camera" << endl;
+        Verbose::PrintMess("Discard points further than " + std::to_string(mpLocalMapper->mThFarPoints) + " m from current camera", Verbose::VERBOSITY_COUT);
         mpLocalMapper->mbFarPoints = true;
     }
     else
@@ -236,16 +238,13 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
         mpViewer->both = mpFrameDrawer->both;
     }
 
-    // Fix verbosity
-    Verbose::SetTh(Verbose::VERBOSITY_QUIET);
-
 }
 
 Sophus::SE3f System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const double &timestamp, const vector<IMU::Point>& vImuMeas, string filename)
 {
     if(mSensor!=STEREO && mSensor!=IMU_STEREO)
     {
-        cerr << "ERROR: you called TrackStereo but input sensor was not set to Stereo nor Stereo-Inertial." << endl;
+        Verbose::PrintMess("ERROR: you called TrackStereo but input sensor was not set to Stereo nor Stereo-Inertial.", Verbose::VERBOSITY_CERR);
         exit(-1);
     }
 
@@ -329,7 +328,7 @@ Sophus::SE3f System::TrackRGBD(const cv::Mat &im, const cv::Mat &depthmap, const
 {
     if(mSensor!=RGBD  && mSensor!=IMU_RGBD)
     {
-        cerr << "ERROR: you called TrackRGBD but input sensor was not set to RGBD." << endl;
+        Verbose::PrintMess("ERROR: you called TrackRGBD but input sensor was not set to RGBD.", Verbose::VERBOSITY_CERR);
         exit(-1);
     }
 
@@ -407,7 +406,7 @@ Sophus::SE3f System::TrackMonocular(const cv::Mat &im, const double &timestamp, 
 
     if(mSensor!=MONOCULAR && mSensor!=IMU_MONOCULAR)
     {
-        cerr << "ERROR: you called TrackMonocular but input sensor was not set to Monocular nor Monocular-Inertial." << endl;
+        Verbose::PrintMess("ERROR: you called TrackMonocular but input sensor was not set to Monocular nor Monocular-Inertial.", Verbose::VERBOSITY_CERR);
         exit(-1);
     }
 
@@ -453,7 +452,7 @@ Sophus::SE3f System::TrackMonocular(const cv::Mat &im, const double &timestamp, 
         }
         else if(mbResetActiveMap)
         {
-            cout << "SYSTEM-> Reseting active map in monocular case" << endl;
+            Verbose::PrintMess("SYSTEM-> Reseting active map in monocular case", Verbose::VERBOSITY_COUT);
             mpTracker->ResetActiveMap();
             mbResetActiveMap = false;
         }
@@ -519,7 +518,7 @@ void System::Shutdown()
         mbShutDown = true;
     }
 
-    cout << "Shutdown" << endl;
+    Verbose::PrintMess("Shutdown", Verbose::VERBOSITY_COUT);
 
     mpLocalMapper->RequestFinish();
     mpLoopCloser->RequestFinish();
@@ -534,12 +533,12 @@ void System::Shutdown()
     /*while(!mpLocalMapper->isFinished() || !mpLoopCloser->isFinished() || mpLoopCloser->isRunningGBA())
     {
         if(!mpLocalMapper->isFinished())
-            cout << "mpLocalMapper is not finished" << endl;*/
+            cout << "mpLocalMapper is not finished", Verbose::VERBOSITY_CERR);*/
         /*if(!mpLoopCloser->isFinished())
-            cout << "mpLoopCloser is not finished" << endl;
+            cout << "mpLoopCloser is not finished", Verbose::VERBOSITY_CERR);
         if(mpLoopCloser->isRunningGBA()){
-            cout << "mpLoopCloser is running GBA" << endl;
-            cout << "break anyway..." << endl;
+            cout << "mpLoopCloser is running GBA", Verbose::VERBOSITY_CERR);
+            cout << "break anyway...", Verbose::VERBOSITY_CERR);
             break;
         }*/
         /*usleep(5000);
@@ -568,10 +567,10 @@ bool System::isShutDown() {
 
 void System::SaveTrajectoryTUM(const string &filename)
 {
-    cout << endl << "Saving camera trajectory to " << filename << " ..." << endl;
+    Verbose::PrintMess("Saving camera trajectory to " + filename + " ...", Verbose::VERBOSITY_COUT);
     if(mSensor==MONOCULAR)
     {
-        cerr << "ERROR: SaveTrajectoryTUM cannot be used for monocular." << endl;
+        Verbose::PrintMess("ERROR: SaveTrajectoryTUM cannot be used for monocular.", Verbose::VERBOSITY_CERR);
         return;
     }
 
@@ -620,15 +619,15 @@ void System::SaveTrajectoryTUM(const string &filename)
         Eigen::Vector3f twc = Twc.translation();
         Eigen::Quaternionf q = Twc.unit_quaternion();
 
-        f << setprecision(6) << *lT << " " <<  setprecision(9) << twc(0) << " " << twc(1) << " " << twc(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << endl;
+        f << setprecision(6) << *lT << " " <<  setprecision(9) << twc(0) << " " << twc(1) << " " << twc(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << std::endl;
     }
     f.close();
-    // cout << endl << "trajectory saved!" << endl;
+    // cout << endl << "trajectory saved!", Verbose::VERBOSITY_CERR);
 }
 
 void System::SaveKeyFrameTrajectoryTUM(const string &filename)
 {
-    cout << endl << "Saving keyframe trajectory to " << filename << " ..." << endl;
+    Verbose::PrintMess("Saving keyframe trajectory to " + filename + " ...", Verbose::VERBOSITY_COUT);
 
     vector<KeyFrame*> vpKFs = mpAtlas->GetAllKeyFrames();
     sort(vpKFs.begin(),vpKFs.end(),KeyFrame::lId);
@@ -652,7 +651,7 @@ void System::SaveKeyFrameTrajectoryTUM(const string &filename)
         Eigen::Quaternionf q = Twc.unit_quaternion();
         Eigen::Vector3f t = Twc.translation();
         f << setprecision(6) << pKF->mTimeStamp << setprecision(7) << " " << t(0) << " " << t(1) << " " << t(2)
-          << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << endl;
+          << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << std::endl;
 
     }
 
@@ -662,20 +661,20 @@ void System::SaveKeyFrameTrajectoryTUM(const string &filename)
 void System::SaveTrajectoryEuRoC(const string &filename)
 {
 
-    cout << endl << "Saving trajectory to " << filename << " ..." << endl;
+    Verbose::PrintMess("Saving trajectory to " + filename + " ...", Verbose::VERBOSITY_COUT);
     /*if(mSensor==MONOCULAR)
     {
-        cerr << "ERROR: SaveTrajectoryEuRoC cannot be used for monocular." << endl;
+        Verbose::PrintMess("ERROR: SaveTrajectoryEuRoC cannot be used for monocular.", Verbose::VERBOSITY_CERR);
         return;
     }*/
 
     vector<Map*> vpMaps = mpAtlas->GetAllMaps();
     int numMaxKFs = 0;
     Map* pBiggerMap;
-    std::cout << "There are " << std::to_string(vpMaps.size()) << " maps in the atlas" << std::endl;
+    Verbose::PrintMess("There are " + std::to_string(vpMaps.size()) + " maps in the atlas", Verbose::VERBOSITY_COUT);
     for(Map* pMap :vpMaps)
     {
-        std::cout << "  Map " << std::to_string(pMap->GetId()) << " has " << std::to_string(pMap->GetAllKeyFrames().size()) << " KFs" << std::endl;
+        Verbose::PrintMess("  Map " + std::to_string(pMap->GetId()) + " has " + std::to_string(pMap->GetAllKeyFrames().size()) + " KFs", Verbose::VERBOSITY_COUT);
         if(pMap->GetAllKeyFrames().size() > numMaxKFs)
         {
             numMaxKFs = pMap->GetAllKeyFrames().size();
@@ -696,7 +695,7 @@ void System::SaveTrajectoryEuRoC(const string &filename)
 
     ofstream f;
     f.open(filename.c_str());
-    // cout << "file open" << endl;
+    // cout << "file open", Verbose::VERBOSITY_CERR);
     f << fixed;
 
     // Frame pose is stored relative to its reference keyframe (which is optimized by BA and pose graph).
@@ -709,22 +708,22 @@ void System::SaveTrajectoryEuRoC(const string &filename)
     list<double>::iterator lT = mpTracker->mlFrameTimes.begin();
     list<bool>::iterator lbL = mpTracker->mlbLost.begin();
 
-    //cout << "size mlpReferences: " << mpTracker->mlpReferences.size() << endl;
-    //cout << "size mlRelativeFramePoses: " << mpTracker->mlRelativeFramePoses.size() << endl;
-    //cout << "size mpTracker->mlFrameTimes: " << mpTracker->mlFrameTimes.size() << endl;
-    //cout << "size mpTracker->mlbLost: " << mpTracker->mlbLost.size() << endl;
+    //cout << "size mlpReferences: " << mpTracker->mlpReferences.size(), Verbose::VERBOSITY_CERR);
+    //cout << "size mlRelativeFramePoses: " << mpTracker->mlRelativeFramePoses.size(), Verbose::VERBOSITY_CERR);
+    //cout << "size mpTracker->mlFrameTimes: " << mpTracker->mlFrameTimes.size(), Verbose::VERBOSITY_CERR);
+    //cout << "size mpTracker->mlbLost: " << mpTracker->mlbLost.size(), Verbose::VERBOSITY_CERR);
 
 
     for(auto lit=mpTracker->mlRelativeFramePoses.begin(),
         lend=mpTracker->mlRelativeFramePoses.end();lit!=lend;lit++, lRit++, lT++, lbL++)
     {
-        //cout << "1" << endl;
+        //cout << "1", Verbose::VERBOSITY_CERR);
         if(*lbL)
             continue;
 
 
         KeyFrame* pKF = *lRit;
-        //cout << "KF: " << pKF->mnId << endl;
+        //cout << "KF: " << pKF->mnId, Verbose::VERBOSITY_CERR);
 
         Sophus::SE3f Trw;
 
@@ -732,57 +731,57 @@ void System::SaveTrajectoryEuRoC(const string &filename)
         if (!pKF)
             continue;
 
-        //cout << "2.5" << endl;
+        //cout << "2.5", Verbose::VERBOSITY_CERR);
 
         while(pKF->isBad())
         {
-            //cout << " 2.bad" << endl;
+            //cout << " 2.bad", Verbose::VERBOSITY_CERR);
             Trw = Trw * pKF->mTcp;
             pKF = pKF->GetParent();
-            //cout << "--Parent KF: " << pKF->mnId << endl;
+            //cout << "--Parent KF: " << pKF->mnId, Verbose::VERBOSITY_CERR);
         }
 
         if(!pKF || pKF->GetMap() != pBiggerMap)
         {
-            //cout << "--Parent KF is from another map" << endl;
+            //cout << "--Parent KF is from another map", Verbose::VERBOSITY_CERR);
             continue;
         }
 
-        //cout << "3" << endl;
+        //cout << "3", Verbose::VERBOSITY_CERR);
 
         Trw = Trw * pKF->GetPose()*Twb; // Tcp*Tpw*Twb0=Tcb0 where b0 is the new world reference
 
-        // cout << "4" << endl;
+        // cout << "4", Verbose::VERBOSITY_CERR);
 
         if (mSensor == IMU_MONOCULAR || mSensor == IMU_STEREO || mSensor==IMU_RGBD)
         {
             Sophus::SE3f Twb = (pKF->mImuCalib.mTbc * (*lit) * Trw).inverse();
             Eigen::Quaternionf q = Twb.unit_quaternion();
             Eigen::Vector3f twb = Twb.translation();
-            f << setprecision(6) << 1e9*(*lT) << " " <<  setprecision(9) << twb(0) << " " << twb(1) << " " << twb(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << endl;
+            f << setprecision(6) << 1e9*(*lT) << " " <<  setprecision(9) << twb(0) << " " << twb(1) << " " << twb(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << std::endl;
         }
         else
         {
             Sophus::SE3f Twc = ((*lit)*Trw).inverse();
             Eigen::Quaternionf q = Twc.unit_quaternion();
             Eigen::Vector3f twc = Twc.translation();
-            f << setprecision(6) << 1e9*(*lT) << " " <<  setprecision(9) << twc(0) << " " << twc(1) << " " << twc(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << endl;
+            f << setprecision(6) << 1e9*(*lT) << " " <<  setprecision(9) << twc(0) << " " << twc(1) << " " << twc(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << std::endl;
         }
 
-        // cout << "5" << endl;
+        // cout << "5", Verbose::VERBOSITY_CERR);
     }
-    //cout << "end saving trajectory" << endl;
+    //cout << "end saving trajectory", Verbose::VERBOSITY_CERR);
     f.close();
-    cout << endl << "End of saving trajectory to " << filename << " ..." << endl;
+    Verbose::PrintMess("End of saving trajectory to " + filename + " ...", Verbose::VERBOSITY_COUT);
 }
 
 void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
 {
 
-    cout << endl << "Saving trajectory of map " << pMap->GetId() << " to " << filename << " ..." << endl;
+    Verbose::PrintMess("Saving trajectory of map " + std::to_string(pMap->GetId()) + " to " + filename + " ...", Verbose::VERBOSITY_COUT);
     /*if(mSensor==MONOCULAR)
     {
-        cerr << "ERROR: SaveTrajectoryEuRoC cannot be used for monocular." << endl;
+        Verbose::PrintMess("ERROR: SaveTrajectoryEuRoC cannot be used for monocular.", Verbose::VERBOSITY_CERR);
         return;
     }*/
 
@@ -801,7 +800,7 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
 
     ofstream f;
     f.open(filename.c_str());
-    // cout << "file open" << endl;
+    // cout << "file open", Verbose::VERBOSITY_CERR);
     f << fixed;
 
     // Frame pose is stored relative to its reference keyframe (which is optimized by BA and pose graph).
@@ -814,22 +813,22 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
     list<double>::iterator lT = mpTracker->mlFrameTimes.begin();
     list<bool>::iterator lbL = mpTracker->mlbLost.begin();
 
-    //cout << "size mlpReferences: " << mpTracker->mlpReferences.size() << endl;
-    //cout << "size mlRelativeFramePoses: " << mpTracker->mlRelativeFramePoses.size() << endl;
-    //cout << "size mpTracker->mlFrameTimes: " << mpTracker->mlFrameTimes.size() << endl;
-    //cout << "size mpTracker->mlbLost: " << mpTracker->mlbLost.size() << endl;
+    //cout << "size mlpReferences: " << mpTracker->mlpReferences.size(), Verbose::VERBOSITY_CERR);
+    //cout << "size mlRelativeFramePoses: " << mpTracker->mlRelativeFramePoses.size(), Verbose::VERBOSITY_CERR);
+    //cout << "size mpTracker->mlFrameTimes: " << mpTracker->mlFrameTimes.size(), Verbose::VERBOSITY_CERR);
+    //cout << "size mpTracker->mlbLost: " << mpTracker->mlbLost.size(), Verbose::VERBOSITY_CERR);
 
 
     for(auto lit=mpTracker->mlRelativeFramePoses.begin(),
         lend=mpTracker->mlRelativeFramePoses.end();lit!=lend;lit++, lRit++, lT++, lbL++)
     {
-        //cout << "1" << endl;
+        //cout << "1", Verbose::VERBOSITY_CERR);
         if(*lbL)
             continue;
 
 
         KeyFrame* pKF = *lRit;
-        //cout << "KF: " << pKF->mnId << endl;
+        //cout << "KF: " << pKF->mnId, Verbose::VERBOSITY_CERR);
 
         Sophus::SE3f Trw;
 
@@ -837,57 +836,57 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
         if (!pKF)
             continue;
 
-        //cout << "2.5" << endl;
+        //cout << "2.5", Verbose::VERBOSITY_CERR);
 
         while(pKF->isBad())
         {
-            //cout << " 2.bad" << endl;
+            //cout << " 2.bad", Verbose::VERBOSITY_CERR);
             Trw = Trw * pKF->mTcp;
             pKF = pKF->GetParent();
-            //cout << "--Parent KF: " << pKF->mnId << endl;
+            //cout << "--Parent KF: " << pKF->mnId, Verbose::VERBOSITY_CERR);
         }
 
         if(!pKF || pKF->GetMap() != pMap)
         {
-            //cout << "--Parent KF is from another map" << endl;
+            //cout << "--Parent KF is from another map", Verbose::VERBOSITY_CERR);
             continue;
         }
 
-        //cout << "3" << endl;
+        //cout << "3", Verbose::VERBOSITY_CERR);
 
         Trw = Trw * pKF->GetPose()*Twb; // Tcp*Tpw*Twb0=Tcb0 where b0 is the new world reference
 
-        // cout << "4" << endl;
+        // cout << "4", Verbose::VERBOSITY_CERR);
 
         if (mSensor == IMU_MONOCULAR || mSensor == IMU_STEREO || mSensor==IMU_RGBD)
         {
             Sophus::SE3f Twb = (pKF->mImuCalib.mTbc * (*lit) * Trw).inverse();
             Eigen::Quaternionf q = Twb.unit_quaternion();
             Eigen::Vector3f twb = Twb.translation();
-            f << setprecision(6) << 1e9*(*lT) << " " <<  setprecision(9) << twb(0) << " " << twb(1) << " " << twb(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << endl;
+            f << setprecision(6) << 1e9*(*lT) << " " <<  setprecision(9) << twb(0) << " " << twb(1) << " " << twb(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << std::endl;
         }
         else
         {
             Sophus::SE3f Twc = ((*lit)*Trw).inverse();
             Eigen::Quaternionf q = Twc.unit_quaternion();
             Eigen::Vector3f twc = Twc.translation();
-            f << setprecision(6) << 1e9*(*lT) << " " <<  setprecision(9) << twc(0) << " " << twc(1) << " " << twc(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << endl;
+            f << setprecision(6) << 1e9*(*lT) << " " <<  setprecision(9) << twc(0) << " " << twc(1) << " " << twc(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << std::endl;
         }
 
-        // cout << "5" << endl;
+        // cout << "5", Verbose::VERBOSITY_CERR);
     }
-    //cout << "end saving trajectory" << endl;
+    //cout << "end saving trajectory", Verbose::VERBOSITY_CERR);
     f.close();
-    cout << endl << "End of saving trajectory to " << filename << " ..." << endl;
+    Verbose::PrintMess("End of saving trajectory to " + filename + " ...", Verbose::VERBOSITY_COUT);
 }
 
 /*void System::SaveTrajectoryEuRoC(const string &filename)
 {
 
-    cout << endl << "Saving trajectory to " << filename << " ..." << endl;
+    cout << endl << "Saving trajectory to " << filename << " ...", Verbose::VERBOSITY_CERR);
     if(mSensor==MONOCULAR)
     {
-        cerr << "ERROR: SaveTrajectoryEuRoC cannot be used for monocular." << endl;
+        Verbose::PrintMess("ERROR: SaveTrajectoryEuRoC cannot be used for monocular.", Verbose::VERBOSITY_CERR);
         return;
     }
 
@@ -916,7 +915,7 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
 
     ofstream f;
     f.open(filename.c_str());
-    // cout << "file open" << endl;
+    // cout << "file open", Verbose::VERBOSITY_CERR);
     f << fixed;
 
     // Frame pose is stored relative to its reference keyframe (which is optimized by BA and pose graph).
@@ -929,22 +928,22 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
     list<double>::iterator lT = mpTracker->mlFrameTimes.begin();
     list<bool>::iterator lbL = mpTracker->mlbLost.begin();
 
-    //cout << "size mlpReferences: " << mpTracker->mlpReferences.size() << endl;
-    //cout << "size mlRelativeFramePoses: " << mpTracker->mlRelativeFramePoses.size() << endl;
-    //cout << "size mpTracker->mlFrameTimes: " << mpTracker->mlFrameTimes.size() << endl;
-    //cout << "size mpTracker->mlbLost: " << mpTracker->mlbLost.size() << endl;
+    //cout << "size mlpReferences: " << mpTracker->mlpReferences.size(), Verbose::VERBOSITY_CERR);
+    //cout << "size mlRelativeFramePoses: " << mpTracker->mlRelativeFramePoses.size(), Verbose::VERBOSITY_CERR);
+    //cout << "size mpTracker->mlFrameTimes: " << mpTracker->mlFrameTimes.size(), Verbose::VERBOSITY_CERR);
+    //cout << "size mpTracker->mlbLost: " << mpTracker->mlbLost.size(), Verbose::VERBOSITY_CERR);
 
 
     for(list<Sophus::SE3f>::iterator lit=mpTracker->mlRelativeFramePoses.begin(),
         lend=mpTracker->mlRelativeFramePoses.end();lit!=lend;lit++, lRit++, lT++, lbL++)
     {
-        //cout << "1" << endl;
+        //cout << "1", Verbose::VERBOSITY_CERR);
         if(*lbL)
             continue;
 
 
         KeyFrame* pKF = *lRit;
-        //cout << "KF: " << pKF->mnId << endl;
+        //cout << "KF: " << pKF->mnId, Verbose::VERBOSITY_CERR);
 
         Sophus::SE3f Trw;
 
@@ -952,27 +951,27 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
         if (!pKF)
             continue;
 
-        //cout << "2.5" << endl;
+        //cout << "2.5", Verbose::VERBOSITY_CERR);
 
         while(pKF->isBad())
         {
-            //cout << " 2.bad" << endl;
+            //cout << " 2.bad", Verbose::VERBOSITY_CERR);
             Trw = Trw * pKF->mTcp;
             pKF = pKF->GetParent();
-            //cout << "--Parent KF: " << pKF->mnId << endl;
+            //cout << "--Parent KF: " << pKF->mnId, Verbose::VERBOSITY_CERR);
         }
 
         if(!pKF || pKF->GetMap() != pBiggerMap)
         {
-            //cout << "--Parent KF is from another map" << endl;
+            //cout << "--Parent KF is from another map", Verbose::VERBOSITY_CERR);
             continue;
         }
 
-        //cout << "3" << endl;
+        //cout << "3", Verbose::VERBOSITY_CERR);
 
         Trw = Trw * pKF->GetPose()*Twb; // Tcp*Tpw*Twb0=Tcb0 where b0 is the new world reference
 
-        // cout << "4" << endl;
+        // cout << "4", Verbose::VERBOSITY_CERR);
 
 
         if (mSensor == IMU_MONOCULAR || mSensor == IMU_STEREO || mSensor==IMU_RGBD)
@@ -982,7 +981,7 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
 
             Eigen::Vector3f twb = Twb.translation();
             Eigen::Quaternionf q = Twb.unit_quaternion();
-            f << setprecision(6) << 1e9*(*lT) << " " <<  setprecision(9) << twb(0) << " " << twb(1) << " " << twb(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << endl;
+            f << setprecision(6) << 1e9*(*lT) << " " <<  setprecision(9) << twb(0) << " " << twb(1) << " " << twb(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w(), Verbose::VERBOSITY_CERR);
         }
         else
         {
@@ -991,20 +990,20 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
 
             Eigen::Vector3f twc = Twc.translation();
             Eigen::Quaternionf q = Twc.unit_quaternion();
-            f << setprecision(6) << 1e9*(*lT) << " " <<  setprecision(9) << twc(0) << " " << twc(1) << " " << twc(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << endl;
+            f << setprecision(6) << 1e9*(*lT) << " " <<  setprecision(9) << twc(0) << " " << twc(1) << " " << twc(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w(), Verbose::VERBOSITY_CERR);
         }
 
-        // cout << "5" << endl;
+        // cout << "5", Verbose::VERBOSITY_CERR);
     }
-    //cout << "end saving trajectory" << endl;
+    //cout << "end saving trajectory", Verbose::VERBOSITY_CERR);
     f.close();
-    cout << endl << "End of saving trajectory to " << filename << " ..." << endl;
+    cout << endl << "End of saving trajectory to " << filename << " ...", Verbose::VERBOSITY_CERR);
 }*/
 
 
 /*void System::SaveKeyFrameTrajectoryEuRoC_old(const string &filename)
 {
-    cout << endl << "Saving keyframe trajectory to " << filename << " ..." << endl;
+    cout << endl << "Saving keyframe trajectory to " << filename << " ...", Verbose::VERBOSITY_CERR);
 
     vector<Map*> vpMaps = mpAtlas->GetAllMaps();
     Map* pBiggerMap;
@@ -1040,7 +1039,7 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
             cv::Mat R = pKF->GetImuRotation().t();
             vector<float> q = Converter::toQuaternion(R);
             cv::Mat twb = pKF->GetImuPosition();
-            f << setprecision(6) << 1e9*pKF->mTimeStamp  << " " <<  setprecision(9) << twb.at<float>(0) << " " << twb.at<float>(1) << " " << twb.at<float>(2) << " " << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << endl;
+            f << setprecision(6) << 1e9*pKF->mTimeStamp  << " " <<  setprecision(9) << twb.at<float>(0) << " " << twb.at<float>(1) << " " << twb.at<float>(2) << " " << q[0] << " " << q[1] << " " << q[2] << " " << q[3], Verbose::VERBOSITY_CERR);
 
         }
         else
@@ -1048,7 +1047,7 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
             cv::Mat R = pKF->GetRotation();
             vector<float> q = Converter::toQuaternion(R);
             cv::Mat t = pKF->GetCameraCenter();
-            f << setprecision(6) << 1e9*pKF->mTimeStamp << " " <<  setprecision(9) << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2) << " " << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << endl;
+            f << setprecision(6) << 1e9*pKF->mTimeStamp << " " <<  setprecision(9) << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2) << " " << q[0] << " " << q[1] << " " << q[2] << " " << q[3], Verbose::VERBOSITY_CERR);
         }
     }
     f.close();
@@ -1056,7 +1055,7 @@ void System::SaveTrajectoryEuRoC(const string &filename, Map* pMap)
 
 void System::SaveKeyFrameTrajectoryEuRoC(const string &filename)
 {
-    cout << endl << "Saving keyframe trajectory to " << filename << " ..." << endl;
+    Verbose::PrintMess("Saving keyframe trajectory to " + filename + " ...", Verbose::VERBOSITY_COUT);
 
     vector<Map*> vpMaps = mpAtlas->GetAllMaps();
     Map* pBiggerMap;
@@ -1072,7 +1071,7 @@ void System::SaveKeyFrameTrajectoryEuRoC(const string &filename)
 
     if(!pBiggerMap)
     {
-        std::cout << "There is not a map!!" << std::endl;
+        Verbose::PrintMess("There is not a map!!", Verbose::VERBOSITY_COUT);
         return;
     }
 
@@ -1098,7 +1097,7 @@ void System::SaveKeyFrameTrajectoryEuRoC(const string &filename)
             Sophus::SE3f Twb = pKF->GetImuPose();
             Eigen::Quaternionf q = Twb.unit_quaternion();
             Eigen::Vector3f twb = Twb.translation();
-            f << setprecision(6) << 1e9*pKF->mTimeStamp  << " " <<  setprecision(9) << twb(0) << " " << twb(1) << " " << twb(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << endl;
+            f << setprecision(6) << 1e9*pKF->mTimeStamp  << " " <<  setprecision(9) << twb(0) << " " << twb(1) << " " << twb(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << std::endl;
 
         }
         else
@@ -1106,7 +1105,7 @@ void System::SaveKeyFrameTrajectoryEuRoC(const string &filename)
             Sophus::SE3f Twc = pKF->GetPoseInverse();
             Eigen::Quaternionf q = Twc.unit_quaternion();
             Eigen::Vector3f t = Twc.translation();
-            f << setprecision(6) << 1e9*pKF->mTimeStamp << " " <<  setprecision(9) << t(0) << " " << t(1) << " " << t(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << endl;
+            f << setprecision(6) << 1e9*pKF->mTimeStamp << " " <<  setprecision(9) << t(0) << " " << t(1) << " " << t(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w()  << std::endl;
         }
     }
     f.close();
@@ -1114,7 +1113,7 @@ void System::SaveKeyFrameTrajectoryEuRoC(const string &filename)
 
 void System::SaveKeyFrameTrajectoryEuRoC(const string &filename, Map* pMap)
 {
-    cout << endl << "Saving keyframe trajectory of map " << pMap->GetId() << " to " << filename << " ..." << endl;
+    Verbose::PrintMess("Saving keyframe trajectory of map " + std::to_string(pMap->GetId()) + " to " + filename + " ...", Verbose::VERBOSITY_COUT);
 
     vector<KeyFrame*> vpKFs = pMap->GetAllKeyFrames();
     sort(vpKFs.begin(),vpKFs.end(),KeyFrame::lId);
@@ -1136,7 +1135,7 @@ void System::SaveKeyFrameTrajectoryEuRoC(const string &filename, Map* pMap)
             Sophus::SE3f Twb = pKF->GetImuPose();
             Eigen::Quaternionf q = Twb.unit_quaternion();
             Eigen::Vector3f twb = Twb.translation();
-            f << setprecision(6) << 1e9*pKF->mTimeStamp  << " " <<  setprecision(9) << twb(0) << " " << twb(1) << " " << twb(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << endl;
+            f << setprecision(6) << 1e9*pKF->mTimeStamp  << " " <<  setprecision(9) << twb(0) << " " << twb(1) << " " << twb(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << std::endl;
 
         }
         else
@@ -1144,7 +1143,7 @@ void System::SaveKeyFrameTrajectoryEuRoC(const string &filename, Map* pMap)
             Sophus::SE3f Twc = pKF->GetPoseInverse();
             Eigen::Quaternionf q = Twc.unit_quaternion();
             Eigen::Vector3f t = Twc.translation();
-            f << setprecision(6) << 1e9*pKF->mTimeStamp << " " <<  setprecision(9) << t(0) << " " << t(1) << " " << t(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << endl;
+            f << setprecision(6) << 1e9*pKF->mTimeStamp << " " <<  setprecision(9) << t(0) << " " << t(1) << " " << t(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << std::endl;
         }
     }
     f.close();
@@ -1152,10 +1151,10 @@ void System::SaveKeyFrameTrajectoryEuRoC(const string &filename, Map* pMap)
 
 /*void System::SaveTrajectoryKITTI(const string &filename)
 {
-    cout << endl << "Saving camera trajectory to " << filename << " ..." << endl;
+    cout << endl << "Saving camera trajectory to " << filename << " ...", Verbose::VERBOSITY_CERR);
     if(mSensor==MONOCULAR)
     {
-        cerr << "ERROR: SaveTrajectoryKITTI cannot be used for monocular." << endl;
+        Verbose::PrintMess("ERROR: SaveTrajectoryKITTI cannot be used for monocular.", Verbose::VERBOSITY_CERR);
         return;
     }
 
@@ -1198,17 +1197,17 @@ void System::SaveKeyFrameTrajectoryEuRoC(const string &filename, Map* pMap)
 
         f << setprecision(9) << Rwc.at<float>(0,0) << " " << Rwc.at<float>(0,1)  << " " << Rwc.at<float>(0,2) << " "  << twc.at<float>(0) << " " <<
              Rwc.at<float>(1,0) << " " << Rwc.at<float>(1,1)  << " " << Rwc.at<float>(1,2) << " "  << twc.at<float>(1) << " " <<
-             Rwc.at<float>(2,0) << " " << Rwc.at<float>(2,1)  << " " << Rwc.at<float>(2,2) << " "  << twc.at<float>(2) << endl;
+             Rwc.at<float>(2,0) << " " << Rwc.at<float>(2,1)  << " " << Rwc.at<float>(2,2) << " "  << twc.at<float>(2), Verbose::VERBOSITY_CERR);
     }
     f.close();
 }*/
 
 void System::SaveTrajectoryKITTI(const string &filename)
 {
-    cout << endl << "Saving camera trajectory to " << filename << " ..." << endl;
+    Verbose::PrintMess("Saving camera trajectory to " + filename + " ...", Verbose::VERBOSITY_COUT);
     if(mSensor==MONOCULAR)
     {
-        cerr << "ERROR: SaveTrajectoryKITTI cannot be used for monocular." << endl;
+        Verbose::PrintMess("ERROR: SaveTrajectoryKITTI cannot be used for monocular.", Verbose::VERBOSITY_CERR);
         return;
     }
 
@@ -1256,7 +1255,7 @@ void System::SaveTrajectoryKITTI(const string &filename)
 
         f << setprecision(9) << Rwc(0,0) << " " << Rwc(0,1)  << " " << Rwc(0,2) << " "  << twc(0) << " " <<
              Rwc(1,0) << " " << Rwc(1,1)  << " " << Rwc(1,2) << " "  << twc(1) << " " <<
-             Rwc(2,0) << " " << Rwc(2,1)  << " " << Rwc(2,2) << " "  << twc(2) << endl;
+             Rwc(2,0) << " " << Rwc(2,1)  << " " << Rwc(2,2) << " "  << twc(2) << std::endl;
     }
     f.close();
 }
@@ -1271,28 +1270,28 @@ void System::SaveDebugData(const int &initIdx)
     ofstream f;
     f.open("init_Scale_" + to_string(mpLocalMapper->mInitSect) + ".txt", ios_base::app);
     f << fixed;
-    f << mpLocalMapper->mScale << endl;
+    f << mpLocalMapper->mScale << std::endl;
     f.close();
 
     // 2. Save gravity direction
     f.open("init_GDir_" +to_string(mpLocalMapper->mInitSect)+ ".txt", ios_base::app);
     f << fixed;
-    f << mpLocalMapper->mRwg(0,0) << "," << mpLocalMapper->mRwg(0,1) << "," << mpLocalMapper->mRwg(0,2) << endl;
-    f << mpLocalMapper->mRwg(1,0) << "," << mpLocalMapper->mRwg(1,1) << "," << mpLocalMapper->mRwg(1,2) << endl;
-    f << mpLocalMapper->mRwg(2,0) << "," << mpLocalMapper->mRwg(2,1) << "," << mpLocalMapper->mRwg(2,2) << endl;
+    f << mpLocalMapper->mRwg(0,0) << "," << mpLocalMapper->mRwg(0,1) << "," << mpLocalMapper->mRwg(0,2) << std::endl;
+    f << mpLocalMapper->mRwg(1,0) << "," << mpLocalMapper->mRwg(1,1) << "," << mpLocalMapper->mRwg(1,2) << std::endl;
+    f << mpLocalMapper->mRwg(2,0) << "," << mpLocalMapper->mRwg(2,1) << "," << mpLocalMapper->mRwg(2,2) << std::endl;
     f.close();
 
     // 3. Save computational cost
     f.open("init_CompCost_" +to_string(mpLocalMapper->mInitSect)+ ".txt", ios_base::app);
     f << fixed;
-    f << mpLocalMapper->mCostTime << endl;
+    f << mpLocalMapper->mCostTime << std::endl;
     f.close();
 
     // 4. Save biases
     f.open("init_Biases_" +to_string(mpLocalMapper->mInitSect)+ ".txt", ios_base::app);
     f << fixed;
-    f << mpLocalMapper->mbg(0) << "," << mpLocalMapper->mbg(1) << "," << mpLocalMapper->mbg(2) << endl;
-    f << mpLocalMapper->mba(0) << "," << mpLocalMapper->mba(1) << "," << mpLocalMapper->mba(2) << endl;
+    f << mpLocalMapper->mbg(0) << "," << mpLocalMapper->mbg(1) << "," << mpLocalMapper->mbg(2) << std::endl;
+    f << mpLocalMapper->mba(0) << "," << mpLocalMapper->mba(1) << "," << mpLocalMapper->mba(2) << std::endl;
     f.close();
 
     // 5. Save covariance matrix
@@ -1306,14 +1305,14 @@ void System::SaveDebugData(const int &initIdx)
                 f << ",";
             f << setprecision(15) << mpLocalMapper->mcovInertial(i,j);
         }
-        f << endl;
+        f << std::endl;
     }
     f.close();
 
     // 6. Save initialization time
     f.open("init_Time_" +to_string(mpLocalMapper->mInitSect)+ ".txt", ios_base::app);
     f << fixed;
-    f << mpLocalMapper->mInitTime << endl;
+    f << mpLocalMapper->mInitTime << std::endl;
     f.close();
 }
 
@@ -1418,7 +1417,7 @@ void System::SaveAtlas(int type){
 
         if(type == TEXT_FILE) // File text
         {
-            cout << "Starting to write the save text file " << endl;
+            Verbose::PrintMess("Starting to write the save text file ", Verbose::VERBOSITY_COUT);
             std::remove(pathSaveFileName.c_str());
             std::ofstream ofs(pathSaveFileName, std::ios::binary);
             boost::archive::text_oarchive oa(ofs);
@@ -1426,18 +1425,18 @@ void System::SaveAtlas(int type){
             oa << strVocabularyName;
             oa << strVocabularyChecksum;
             oa << mpAtlas;
-            cout << "End to write the save text file" << endl;
+            Verbose::PrintMess("End to write the save text file", Verbose::VERBOSITY_COUT);
         }
         else if(type == BINARY_FILE) // File binary
         {
-            cout << "Starting to write the save binary file" << endl;
+            Verbose::PrintMess("Starting to write the save binary file", Verbose::VERBOSITY_COUT);
             std::remove(pathSaveFileName.c_str());
             std::ofstream ofs(pathSaveFileName, std::ios::binary);
             boost::archive::binary_oarchive oa(ofs);
             oa << strVocabularyName;
             oa << strVocabularyChecksum;
             oa << mpAtlas;
-            cout << "End to write save binary file" << endl;
+            Verbose::PrintMess("End to write save binary file", Verbose::VERBOSITY_COUT);
         }
     }
 }
@@ -1453,34 +1452,34 @@ bool System::LoadAtlas(int type)
 
     if(type == TEXT_FILE) // File text
     {
-        cout << "Starting to read the save text file " << endl;
+        Verbose::PrintMess("Starting to read the save text file ", Verbose::VERBOSITY_COUT);
         std::ifstream ifs(pathLoadFileName, std::ios::binary);
         if(!ifs.good())
         {
-            cout << "Load file not found" << endl;
+            Verbose::PrintMess("Load file not found", Verbose::VERBOSITY_CERR);
             return false;
         }
         boost::archive::text_iarchive ia(ifs);
         ia >> strFileVoc;
         ia >> strVocChecksum;
         ia >> mpAtlas;
-        cout << "End to load the save text file " << endl;
+        Verbose::PrintMess("End to load the save text file ", Verbose::VERBOSITY_COUT);
         isRead = true;
     }
     else if(type == BINARY_FILE) // File binary
     {
-        cout << "Starting to read the save binary file"  << endl;
+        Verbose::PrintMess("Starting to read the save binary file", Verbose::VERBOSITY_COUT);
         std::ifstream ifs(pathLoadFileName, std::ios::binary);
         if(!ifs.good())
         {
-            cout << "Load file not found" << endl;
+            Verbose::PrintMess("Load file not found", Verbose::VERBOSITY_CERR);
             return false;
         }
         boost::archive::binary_iarchive ia(ifs);
         ia >> strFileVoc;
         ia >> strVocChecksum;
         ia >> mpAtlas;
-        cout << "End to load the save binary file" << endl;
+        Verbose::PrintMess("End to load the save binary file", Verbose::VERBOSITY_COUT);
         isRead = true;
     }
 
@@ -1491,8 +1490,8 @@ bool System::LoadAtlas(int type)
 
         if(strInputVocabularyChecksum.compare(strVocChecksum) != 0)
         {
-            cout << "The vocabulary load isn't the same which the load session was created " << endl;
-            cout << "-Vocabulary name: " << strFileVoc << endl;
+            Verbose::PrintMess("The vocabulary load isn't the same which the load session was created ", Verbose::VERBOSITY_CERR);
+            Verbose::PrintMess("-Vocabulary name: " + strFileVoc, Verbose::VERBOSITY_CERR);
             return false; // Both are differents
         }
 
@@ -1518,7 +1517,7 @@ string System::CalculateCheckSum(string filename, int type)
     ifstream f(filename.c_str(), flags);
     if ( !f.is_open() )
     {
-        cout << "[E] Unable to open the in file " << filename << " for Md5 hash." << endl;
+        Verbose::PrintMess("[E] Unable to open the in file " + filename + " for Md5 hash.", Verbose::VERBOSITY_CERR);
         return checksum;
     }
 

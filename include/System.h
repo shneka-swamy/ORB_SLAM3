@@ -49,6 +49,9 @@ class Verbose
 public:
     enum eLevel
     {
+        VERBOSITY_NOTHING=-3,
+        VERBOSITY_CERR=-2,
+        VERBOSITY_COUT=-1,
         VERBOSITY_QUIET=0,
         VERBOSITY_NORMAL=1,
         VERBOSITY_VERBOSE=2,
