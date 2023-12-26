@@ -58,12 +58,15 @@ def align(model,data):
     trans -- translation vector (3x1)
     trans_error -- translational error per point (1xn)
     """
-
-
     numpy.set_printoptions(precision=3,suppress=True)
     model_zerocentered = model - model.mean(1)
     data_zerocentered = data - data.mean(1)
     
+    # TODO: Revert back to the zero centering of the dataset
+    data_zerocentered = data
+    model_zerocentered = model
+
+
     W = numpy.zeros( (3,3) )
     for column in range(model.shape[1]):
         W += numpy.outer(model_zerocentered[:,column],data_zerocentered[:,column])
@@ -73,23 +76,27 @@ def align(model,data):
         S[2,2] = -1
     rot = U*S*Vh
 
-    rotmodel = rot*model_zerocentered
     dots = 0.0
     norms = 0.0
 
+    rotmodel = rot*model_zerocentered
+  
     for column in range(data_zerocentered.shape[1]):
         dots += numpy.dot(data_zerocentered[:,column].transpose(),rotmodel[:,column])
         normi = numpy.linalg.norm(model_zerocentered[:,column])
         norms += normi*normi
-
-    s = float(dots/norms)    
+    
+    if dots == 0:
+        s = 0.0 
+    else:
+        s = float(dots/norms)    
     
     transGT = data.mean(1) - s*rot * model.mean(1)
     trans = data.mean(1) - rot * model.mean(1)
 
     model_alignedGT = s*rot * model + transGT
     model_aligned = rot * model + trans
-
+    
     alignment_errorGT = model_alignedGT - data
     alignment_error = model_aligned - data
 
@@ -160,38 +167,59 @@ if __name__=="__main__":
 
     second_xyz_full = numpy.matrix([[float(value)*float(args.scale) for value in sorted_second_list[i][1][0:3]] for i in range(len(sorted_second_list))]).transpose() # sorted_second_list.keys()]).transpose()
     rot,transGT,trans_errorGT,trans,trans_error, scale = align(second_xyz,first_xyz)
-    
+
+    # Check for multiple sections of data
+    number_linear_first = 0
+    number_linear_second = 0
+
+    for i in range(1, 51, 5):
+        _, _, _, _, _, scale = align(second_xyz_full[:, 0:i], first_xyz[:, 0:i])
+        #print("Scale for first %d frames is: %f" % (i, scale))
+
+        if i == 0:
+            continue
+        else:
+            for j in range(i-5, i):
+                if numpy.linalg.norm(second_xyz_full[:, j] - second_xyz_full[:, j-1]) < 0.1:
+                    number_linear_second += 1
+                if numpy.linalg.norm(first_xyz[:, j] - first_xyz[:, j-1]) < 0.1:
+                    number_linear_first += 1
+
+    rot,transGT,trans_errorGT,trans,trans_error, scale = align(second_xyz,first_xyz)
+    print("Scale for all frames is: %f" % scale)
+
     second_xyz_aligned = scale * rot * second_xyz + trans
     second_xyz_notscaled = rot * second_xyz + trans
     second_xyz_notscaled_full = rot * second_xyz_full + trans
-    first_stamps = first_list.keys()
+    first_stamps = list(first_list.keys())
     first_stamps.sort()
     first_xyz_full = numpy.matrix([[float(value) for value in first_list[b][0:3]] for b in first_stamps]).transpose()
     
-    second_stamps = second_list.keys()
+    second_stamps = list(second_list.keys())
     second_stamps.sort()
     second_xyz_full = numpy.matrix([[float(value)*float(args.scale) for value in second_list[b][0:3]] for b in second_stamps]).transpose()
     second_xyz_full_aligned = scale * rot * second_xyz_full + trans
     
     if args.verbose:
-        print "compared_pose_pairs %d pairs"%(len(trans_error))
+        print("compared_pose_pairs %d pairs"%(len(trans_error)))
 
-        print "absolute_translational_error.rmse %f m"%numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error))
-        print "absolute_translational_error.mean %f m"%numpy.mean(trans_error)
-        print "absolute_translational_error.median %f m"%numpy.median(trans_error)
-        print "absolute_translational_error.std %f m"%numpy.std(trans_error)
-        print "absolute_translational_error.min %f m"%numpy.min(trans_error)
-        print "absolute_translational_error.max %f m"%numpy.max(trans_error)
-        print "max idx: %i" %numpy.argmax(trans_error)
+        print("absolute_translational_error.rmse %f m"%numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)))
+        print("absolute_translational_error.mean %f m"%numpy.mean(trans_error))
+        print("absolute_translational_error.median %f m"%numpy.median(trans_error))
+        print("absolute_translational_error.std %f m"%numpy.std(trans_error))
+        print("absolute_translational_error.min %f m"%numpy.min(trans_error))
+        print("absolute_translational_error.max %f m"%numpy.max(trans_error))
+        print("max idx: %i" %numpy.argmax(trans_error))
+        print("The scale is: %f" %scale)
     else:
         # print "%f, %f " % (numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)),  scale)
         # print "%f,%f" % (numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)),  scale)
-        print "%f,%f,%f" % (numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)), scale, numpy.sqrt(numpy.dot(trans_errorGT,trans_errorGT) / len(trans_errorGT)))
+        print ("%f,%f,%f" % (numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)), scale, numpy.sqrt(numpy.dot(trans_errorGT,trans_errorGT) / len(trans_errorGT))))
         # print "%f" % len(trans_error)
     if args.verbose2:
-        print "compared_pose_pairs %d pairs"%(len(trans_error))
-        print "absolute_translational_error.rmse %f m"%numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error))
-        print "absolute_translational_errorGT.rmse %f m"%numpy.sqrt(numpy.dot(trans_errorGT,trans_errorGT) / len(trans_errorGT))
+        print("compared_pose_pairs %d pairs"%(len(trans_error)))
+        print("absolute_translational_error.rmse %f m"%numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)))
+        print("absolute_translational_errorGT.rmse %f m"%numpy.sqrt(numpy.dot(trans_errorGT,trans_errorGT) / len(trans_errorGT)))
 
     if args.save_associations:
         file = open(args.save_associations,"w")
