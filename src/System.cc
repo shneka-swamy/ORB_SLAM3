@@ -32,6 +32,7 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
+#include <optional>
 
 namespace ORB_SLAM3
 {
@@ -656,6 +657,72 @@ void System::SaveKeyFrameTrajectoryTUM(const string &filename)
     }
 
     f.close();
+}
+
+Sophus::SE3f System::LastTrajectory() {
+    std::vector<Map*> vpMaps = mpAtlas->GetAllMaps();
+    auto maxMapIter = std::max_element(
+        vpMaps.begin(), vpMaps.end(),
+        [](Map* a, Map* b) {
+            return a->GetAllKeyFrames().size() < b->GetAllKeyFrames().size();
+        });
+    
+    std::vector<KeyFrame*> vpKFs = (*maxMapIter)->GetAllKeyFrames();
+    sort(vpKFs.begin(),vpKFs.end(),KeyFrame::lId);
+    // std::cout << "vpKFs.size(): " << vpKFs.size() << " " << std::endl;
+    // for (int i = 0; i < vpKFs.size(); i++) {
+    //     if (vpKFs[i]->isBad())
+    //         continue;
+    //     auto Twb = vpKFs[i]->GetImuPose();
+    //     Eigen::Quaternionf q = Twb.unit_quaternion();
+    //     Eigen::Vector3f t = Twb.translation();
+    //     std::cout << setprecision(6) << static_cast<long>(1e9*vpKFs[i]->mTimeStamp) << " " << t(0) << " " << t(1) << " " << t(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << " " << std::endl;
+    // }
+
+    Sophus::SE3f Twb;
+    if (mSensor==IMU_MONOCULAR || mSensor==IMU_STEREO || mSensor==IMU_RGBD)
+        Twb = vpKFs[0]->GetImuPose();
+    else
+        Twb = vpKFs[0]->GetPoseInverse();
+
+    auto lRit = mpTracker->mlpReferences.back();
+    auto lT = mpTracker->mlFrameTimes.back();
+    auto lbL = mpTracker->mlbLost.back();
+    auto lit = mpTracker->mlRelativeFramePoses.back();
+
+    assert(!lbL);
+    // if (lbL)
+    //     return std::nullopt;
+
+    KeyFrame* pKF = lRit;
+    Sophus::SE3f Trw;
+
+    assert(pKF);
+    // if (!pKF)
+    //     return std::nullopt;
+
+    while(pKF->isBad()) {
+        Trw = Trw * pKF->mTcp;
+        pKF = pKF->GetParent();
+    }
+
+    assert(pKF);
+    assert(pKF->GetMap() == (*maxMapIter));
+    // if (!pKF || pKF->GetMap() != (*maxMapIter))
+    //     return std::nullopt;
+    
+    Trw = Trw * pKF->GetPose()*Twb; // Tcp*Tpw*Twb0=Tcb0 where b0 is the new world reference
+
+    if (mSensor == IMU_MONOCULAR || mSensor == IMU_STEREO || mSensor==IMU_RGBD)
+    {
+        Sophus::SE3f Twb = (pKF->mImuCalib.mTbc * lit * Trw).inverse();
+        Eigen::Quaternionf q = Twb.unit_quaternion();
+        Eigen::Vector3f twb = Twb.translation();
+        // std::cout << setprecision(6) << static_cast<long>(1e9*lT) << " " << twb(0) << " " << twb(1) << " " << twb(2) << " " << q.x() << " " << q.y() << " " << q.z() << " " << q.w() << " " << std::endl;
+        return Twb;
+    }
+    
+    return (lit * Trw).inverse();
 }
 
 void System::SaveTrajectoryEuRoC(const string &filename)
