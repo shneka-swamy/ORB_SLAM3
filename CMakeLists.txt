@@ -44,7 +44,7 @@ add_library(ORB_SLAM3
   )
 
 set_target_properties(ORB_SLAM3 PROPERTIES
-  CXX_STANDARD 11
+  CXX_STANDARD 17
   CXX_STANDARD_REQUIRED YES
   CXX_EXTENSIONS NO
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
@@ -91,7 +91,7 @@ function(compileORB3 exec files)
   add_executable(${exec} ${files})
   target_link_libraries(${exec} ORB_SLAM3)
   set_target_properties(${exec} PROPERTIES
-    CXX_STANDARD 11
+    CXX_STANDARD 17
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
