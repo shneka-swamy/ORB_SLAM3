@@ -329,7 +329,7 @@ Sophus::SE3f System::TrackRGBD(const cv::Mat &im, const cv::Mat &depthmap, const
 {
     if(mSensor!=RGBD  && mSensor!=IMU_RGBD)
     {
-        Verbose::PrintMess("ERROR: you called TrackRGBD but input sensor was not set to RGBD.", Verbose::VERBOSITY_CERR);
+      std::cerr << "ERROR: you called TrackRGBD but input sensor was not set to RGBD." << std::endl;
         exit(-1);
     }
 
@@ -407,7 +407,7 @@ Sophus::SE3f System::TrackMonocular(const cv::Mat &im, const double &timestamp, 
 
     if(mSensor!=MONOCULAR && mSensor!=IMU_MONOCULAR)
     {
-        Verbose::PrintMess("ERROR: you called TrackMonocular but input sensor was not set to Monocular nor Monocular-Inertial.", Verbose::VERBOSITY_CERR);
+      std::cerr << "ERROR: you called TrackMonocular but input sensor was not set to Monocular nor Monocular-Inertial." << std::endl;
         exit(-1);
     }
 
@@ -571,7 +571,7 @@ void System::SaveTrajectoryTUM(const string &filename)
     Verbose::PrintMess("Saving camera trajectory to " + filename + " ...", Verbose::VERBOSITY_COUT);
     if(mSensor==MONOCULAR)
     {
-        Verbose::PrintMess("ERROR: SaveTrajectoryTUM cannot be used for monocular.", Verbose::VERBOSITY_CERR);
+        std::cout << "ERROR: SaveTrajectoryTUM cannot be used for monocular." << std::endl;
         return;
     }
 

@@ -59,7 +59,7 @@ int main(int argc, char **argv)
     }
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    ORB_SLAM3::System SLAM(argv[1],argv[2],ORB_SLAM3::System::RGBD,true);
+    ORB_SLAM3::System SLAM(argv[1],argv[2],ORB_SLAM3::System::RGBD,false);
     float imageScale = SLAM.GetImageScale();
 
     // Vector for tracking time statistics
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
     // Main loop
     cv::Mat imRGB, imD;
     for(int ni=0; ni<nImages; ni++)
-    {
+    {   
         // Read image and depthmap from file
         imRGB = cv::imread(string(argv[3])+"/"+vstrImageFilenamesRGB[ni],cv::IMREAD_UNCHANGED); //,cv::IMREAD_UNCHANGED);
         imD = cv::imread(string(argv[3])+"/"+vstrImageFilenamesD[ni],cv::IMREAD_UNCHANGED); //,cv::IMREAD_UNCHANGED);
@@ -83,6 +83,13 @@ int main(int argc, char **argv)
         {
             cerr << endl << "Failed to load image at: "
                  << string(argv[3]) << "/" << vstrImageFilenamesRGB[ni] << endl;
+            return 1;
+        }
+
+        if(imD.empty())
+        {
+            cerr << endl << "Failed to load depthmap at: "
+                 << string(argv[3]) << "/" << vstrImageFilenamesD[ni] << endl;
             return 1;
         }
 
@@ -120,8 +127,8 @@ int main(int argc, char **argv)
         else if(ni>0)
             T = tframe-vTimestamps[ni-1];
 
-        if(ttrack<T)
-            usleep((T-ttrack)*1e6);
+        // if(ttrack<T)
+        //     usleep((T-ttrack)*1e6);
     }
 
     // Stop all threads

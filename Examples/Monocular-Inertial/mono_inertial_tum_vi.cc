@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     }
 
     // Load all sequences:
-    int seq;
+    int seq = 0;
     vector<string> vstrImageFilenames;
     vector<double> vTimestampsCam;
     vector<cv::Point3f> vAcc, vGyro;
@@ -190,7 +190,7 @@ int main(int argc, char **argv)
 
       // Pass the image to the SLAM system
       // cout << "tframe = " << tframe << endl;
-      SLAM.TrackMonocular(im,tframe,vImuMeas); // TODO change to monocular_inertial
+      auto pos = SLAM.TrackMonocular(im,tframe,vImuMeas); // TODO change to monocular_inertial
 
 #ifdef COMPILEDWITHC11
       std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
@@ -314,6 +314,8 @@ void LoadIMU(const string &strImuPath, vector<double> &vTimeStamps, vector<cv::P
     vAcc.reserve(5000);
     vGyro.reserve(5000);
 
+    std::cout << "Reading " << strImuPath << std::endl;
+
     while(!fImu.eof())
     {
         string s;
@@ -329,6 +331,11 @@ void LoadIMU(const string &strImuPath, vector<double> &vTimeStamps, vector<cv::P
             int count = 0;
             while ((pos = s.find(',')) != string::npos) {
                 item = s.substr(0, pos);
+                if (item.find(' ') != string::npos) {
+                  std::cout << "item " << item << std::endl;
+                  std::cout << "s " << s << std::endl;
+                  exit(2);
+                }
                 data[count++] = stod(item);
                 s.erase(0, pos + 1);
             }
