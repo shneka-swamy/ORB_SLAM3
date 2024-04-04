@@ -53,8 +53,7 @@ set_target_properties(o_ORB_SLAM3 PROPERTIES
   )
 
 target_include_directories(o_ORB_SLAM3 PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/CameraModels
+  ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
 target_include_directories(o_ORB_SLAM3 SYSTEM PUBLIC
