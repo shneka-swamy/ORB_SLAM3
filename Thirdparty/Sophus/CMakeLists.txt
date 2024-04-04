@@ -96,7 +96,7 @@ target_compile_features (o_sophus INTERFACE
 )
 
 # Add sources as custom target so that they are shown in IDE's
-add_custom_target(other SOURCES ${SOPHUS_OTHER_FILES})
+add_custom_target(o_other SOURCES ${SOPHUS_OTHER_FILES})
 
 # Create 'test' make target using ctest
 option(BUILD_TESTS "Build tests." ON)
