@@ -17,8 +17,8 @@
 */
 
 
-#ifndef MAPDRAWER_H
-#define MAPDRAWER_H
+#ifndef O_MAPDRAWER_H
+#define O_MAPDRAWER_H
 
 #include"Atlas.h"
 #include"MapPoint.h"

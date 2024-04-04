@@ -17,8 +17,8 @@
 */
 
 
-#ifndef CONVERTER_H
-#define CONVERTER_H
+#ifndef O_CONVERTER_H
+#define O_CONVERTER_H
 
 #include<opencv2/core/core.hpp>
 

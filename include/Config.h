@@ -16,8 +16,8 @@
 * If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef O_CONFIG_H
+#define O_CONFIG_H
 
 #include <unistd.h>
 #include <stdio.h>

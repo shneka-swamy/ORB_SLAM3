@@ -16,8 +16,8 @@
 * If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CAMERAMODELS_GEOMETRICCAMERA_H
-#define CAMERAMODELS_GEOMETRICCAMERA_H
+#ifndef O_CAMERAMODELS_GEOMETRICCAMERA_H
+#define O_CAMERAMODELS_GEOMETRICCAMERA_H
 
 #include <vector>
 

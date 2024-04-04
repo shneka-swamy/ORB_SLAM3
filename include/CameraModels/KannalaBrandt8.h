@@ -16,8 +16,8 @@
 * If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CAMERAMODELS_KANNALABRANDT8_H
-#define CAMERAMODELS_KANNALABRANDT8_H
+#ifndef O_CAMERAMODELS_KANNALABRANDT8_H
+#define O_CAMERAMODELS_KANNALABRANDT8_H
 
 
 #include <assert.h>

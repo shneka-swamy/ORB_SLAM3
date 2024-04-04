@@ -17,8 +17,8 @@
 */
 
 
-#ifndef FRAME_H
-#define FRAME_H
+#ifndef O_FRAME_H
+#define O_FRAME_H
 
 #include<vector>
 

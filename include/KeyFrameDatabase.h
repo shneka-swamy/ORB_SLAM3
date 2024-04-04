@@ -17,8 +17,8 @@
 */
 
 
-#ifndef KEYFRAMEDATABASE_H
-#define KEYFRAMEDATABASE_H
+#ifndef O_KEYFRAMEDATABASE_H
+#define O_KEYFRAMEDATABASE_H
 
 #include <vector>
 #include <list>

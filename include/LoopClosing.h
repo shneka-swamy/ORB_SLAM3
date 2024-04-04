@@ -17,8 +17,8 @@
 */
 
 
-#ifndef LOOPCLOSING_H
-#define LOOPCLOSING_H
+#ifndef O_LOOPCLOSING_H
+#define O_LOOPCLOSING_H
 
 #include "KeyFrame.h"
 #include "LocalMapping.h"

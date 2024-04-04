@@ -17,8 +17,8 @@
 */
 
 
-#ifndef OPTIMIZER_H
-#define OPTIMIZER_H
+#ifndef O_OPTIMIZER_H
+#define O_OPTIMIZER_H
 
 #include "Map.h"
 #include "MapPoint.h"

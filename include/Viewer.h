@@ -17,8 +17,8 @@
 */
 
 
-#ifndef VIEWER_H
-#define VIEWER_H
+#ifndef O_VIEWER_H
+#define O_VIEWER_H
 
 #include "FrameDrawer.h"
 #include "MapDrawer.h"

@@ -17,8 +17,8 @@
 */
 
 
-#ifndef MAPPOINT_H
-#define MAPPOINT_H
+#ifndef O_MAPPOINT_H
+#define O_MAPPOINT_H
 
 #include "KeyFrame.h"
 #include "Frame.h"

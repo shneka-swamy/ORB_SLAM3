@@ -17,8 +17,8 @@
 */
 
 
-#ifndef SYSTEM_H
-#define SYSTEM_H
+#ifndef O_SYSTEM_H
+#define O_SYSTEM_H
 
 
 #include <unistd.h>

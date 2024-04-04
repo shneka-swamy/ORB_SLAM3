@@ -16,8 +16,8 @@
 * If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ORBEXTRACTOR_H
-#define ORBEXTRACTOR_H
+#ifndef O_ORBEXTRACTOR_H
+#define O_ORBEXTRACTOR_H
 
 #include <vector>
 #include <list>

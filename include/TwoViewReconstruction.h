@@ -16,8 +16,8 @@
 * If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TwoViewReconstruction_H
-#define TwoViewReconstruction_H
+#ifndef O_TwoViewReconstruction_H
+#define O_TwoViewReconstruction_H
 
 #include <opencv2/opencv.hpp>
 #include <Eigen/Core>

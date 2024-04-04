@@ -16,8 +16,8 @@
 * If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SERIALIZATION_UTILS_H
-#define SERIALIZATION_UTILS_H
+#ifndef O_SERIALIZATION_UTILS_H
+#define O_SERIALIZATION_UTILS_H
 
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/vector.hpp>

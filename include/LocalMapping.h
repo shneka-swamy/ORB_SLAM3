@@ -17,8 +17,8 @@
 */
 
 
-#ifndef LOCALMAPPING_H
-#define LOCALMAPPING_H
+#ifndef O_LOCALMAPPING_H
+#define O_LOCALMAPPING_H
 
 #include "KeyFrame.h"
 #include "Atlas.h"

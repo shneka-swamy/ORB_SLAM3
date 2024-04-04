@@ -46,8 +46,8 @@
 * SUCH DAMAGE.                                                               *
 ******************************************************************************/
 
-#ifndef ORB_SLAM3_MLPNPSOLVER_H
-#define ORB_SLAM3_MLPNPSOLVER_H
+#ifndef O_ORB_SLAM3_MLPNPSOLVER_H
+#define O_ORB_SLAM3_MLPNPSOLVER_H
 
 #include "MapPoint.h"
 #include "Frame.h"

@@ -16,8 +16,8 @@
 * If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ORB_SLAM3_SETTINGS_H
-#define ORB_SLAM3_SETTINGS_H
+#ifndef O_ORB_SLAM3_SETTINGS_H
+#define O_ORB_SLAM3_SETTINGS_H
 
 
 // Flag to activate the measurement of time in each process (track,localmap, place recognition).

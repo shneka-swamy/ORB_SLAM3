@@ -17,8 +17,8 @@
 */
 
 
-#ifndef IMUTYPES_H
-#define IMUTYPES_H
+#ifndef O_IMUTYPES_H
+#define O_IMUTYPES_H
 
 #include <vector>
 #include <utility>

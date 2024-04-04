@@ -17,8 +17,8 @@
 */
 
 
-#ifndef SIM3SOLVER_H
-#define SIM3SOLVER_H
+#ifndef O_SIM3SOLVER_H
+#define O_SIM3SOLVER_H
 
 #include <opencv2/opencv.hpp>
 #include <vector>

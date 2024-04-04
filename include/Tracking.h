@@ -17,8 +17,8 @@
 */
 
 
-#ifndef TRACKING_H
-#define TRACKING_H
+#ifndef O_TRACKING_H
+#define O_TRACKING_H
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>

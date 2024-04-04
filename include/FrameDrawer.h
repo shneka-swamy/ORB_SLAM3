@@ -17,8 +17,8 @@
 */
 
 
-#ifndef FRAMEDRAWER_H
-#define FRAMEDRAWER_H
+#ifndef O_FRAMEDRAWER_H
+#define O_FRAMEDRAWER_H
 
 #include "Tracking.h"
 #include "MapPoint.h"

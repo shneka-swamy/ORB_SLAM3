@@ -16,8 +16,8 @@
 * If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ATLAS_H
-#define ATLAS_H
+#ifndef O_ATLAS_H
+#define O_ATLAS_H
 
 #include "Map.h"
 #include "MapPoint.h"

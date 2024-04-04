@@ -16,8 +16,8 @@
 * If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CAMERAMODELS_PINHOLE_H
-#define CAMERAMODELS_PINHOLE_H
+#ifndef O_CAMERAMODELS_PINHOLE_H
+#define O_CAMERAMODELS_PINHOLE_H
 
 #include <assert.h>
 

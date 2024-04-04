@@ -17,8 +17,8 @@
 */
 
 
-#ifndef KEYFRAME_H
-#define KEYFRAME_H
+#ifndef O_KEYFRAME_H
+#define O_KEYFRAME_H
 
 #include "MapPoint.h"
 #include "Thirdparty/DBoW2/DBoW2/BowVector.h"
