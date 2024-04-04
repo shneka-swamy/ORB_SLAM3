@@ -26,7 +26,7 @@
 
 using namespace std;
 
-namespace ORB_SLAM3
+namespace ORB_SLAM3_O
 {
 
 const float eps = 1e-4;
@@ -233,7 +233,7 @@ void ViewerAR::Run()
 
 }
 
-void ViewerAR::SetImagePose(const cv::Mat &im, const cv::Mat &Tcw, const int &status, const vector<cv::KeyPoint> &vKeys, const vector<ORB_SLAM3::MapPoint*> &vMPs)
+void ViewerAR::SetImagePose(const cv::Mat &im, const cv::Mat &Tcw, const int &status, const vector<cv::KeyPoint> &vKeys, const vector<ORB_SLAM3_O::MapPoint*> &vMPs)
 {
     unique_lock<mutex> lock(mMutexPoseImage);
     mImage = im.clone();

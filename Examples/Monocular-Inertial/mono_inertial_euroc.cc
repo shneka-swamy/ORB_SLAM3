@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
     cout.precision(17);
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    ORB_SLAM3::System SLAM(argv[1],argv[2],ORB_SLAM3::System::IMU_MONOCULAR, true);
+    ORB_SLAM3_O::System SLAM(argv[1],argv[2],ORB_SLAM3_O::System::IMU_MONOCULAR, true);
     float imageScale = SLAM.GetImageScale();
 
     double t_resize = 0.f;
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 
         // Main loop
         cv::Mat im;
-        vector<ORB_SLAM3::IMU::Point> vImuMeas;
+        vector<ORB_SLAM3_O::IMU::Point> vImuMeas;
         proccIm = 0;
         for(int ni=0; ni<nImages[seq]; ni++, proccIm++)
         {
@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
 
                 while(vTimestampsImu[seq][first_imu[seq]]<=vTimestampsCam[seq][ni])
                 {
-                    vImuMeas.push_back(ORB_SLAM3::IMU::Point(vAcc[seq][first_imu[seq]].x,vAcc[seq][first_imu[seq]].y,vAcc[seq][first_imu[seq]].z,
+                    vImuMeas.push_back(ORB_SLAM3_O::IMU::Point(vAcc[seq][first_imu[seq]].x,vAcc[seq][first_imu[seq]].y,vAcc[seq][first_imu[seq]].z,
                                                              vGyro[seq][first_imu[seq]].x,vGyro[seq][first_imu[seq]].y,vGyro[seq][first_imu[seq]].z,
                                                              vTimestampsImu[seq][first_imu[seq]]));
                     first_imu[seq]++;

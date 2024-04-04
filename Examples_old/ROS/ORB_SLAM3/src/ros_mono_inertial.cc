@@ -49,7 +49,7 @@ public:
 class ImageGrabber
 {
 public:
-    ImageGrabber(ORB_SLAM3::System* pSLAM, ImuGrabber *pImuGb, const bool bClahe): mpSLAM(pSLAM), mpImuGb(pImuGb), mbClahe(bClahe){}
+    ImageGrabber(ORB_SLAM3_O::System* pSLAM, ImuGrabber *pImuGb, const bool bClahe): mpSLAM(pSLAM), mpImuGb(pImuGb), mbClahe(bClahe){}
 
     void GrabImage(const sensor_msgs::ImageConstPtr& msg);
     cv::Mat GetImage(const sensor_msgs::ImageConstPtr &img_msg);
@@ -58,7 +58,7 @@ public:
     queue<sensor_msgs::ImageConstPtr> img0Buf;
     std::mutex mBufMutex;
    
-    ORB_SLAM3::System* mpSLAM;
+    ORB_SLAM3_O::System* mpSLAM;
     ImuGrabber *mpImuGb;
 
     const bool mbClahe;
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
   bool bEqual = false;
   if(argc < 3 || argc > 4)
   {
-    cerr << endl << "Usage: rosrun ORB_SLAM3 Mono_Inertial path_to_vocabulary path_to_settings [do_equalize]" << endl;
+    cerr << endl << "Usage: rosrun ORB_SLAM3_O Mono_Inertial path_to_vocabulary path_to_settings [do_equalize]" << endl;
     ros::shutdown();
     return 1;
   }
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
   }
 
   // Create SLAM system. It initializes all system threads and gets ready to process frames.
-  ORB_SLAM3::System SLAM(argv[1],argv[2],ORB_SLAM3::System::IMU_MONOCULAR,true);
+  ORB_SLAM3_O::System SLAM(argv[1],argv[2],ORB_SLAM3_O::System::IMU_MONOCULAR,true);
 
   ImuGrabber imugb;
   ImageGrabber igb(&SLAM,&imugb,bEqual); // TODO
@@ -156,7 +156,7 @@ void ImageGrabber::SyncWithImu()
       this->mBufMutex.unlock();
       }
 
-      vector<ORB_SLAM3::IMU::Point> vImuMeas;
+      vector<ORB_SLAM3_O::IMU::Point> vImuMeas;
       mpImuGb->mBufMutex.lock();
       if(!mpImuGb->imuBuf.empty())
       {
@@ -167,7 +167,7 @@ void ImageGrabber::SyncWithImu()
           double t = mpImuGb->imuBuf.front()->header.stamp.toSec();
           cv::Point3f acc(mpImuGb->imuBuf.front()->linear_acceleration.x, mpImuGb->imuBuf.front()->linear_acceleration.y, mpImuGb->imuBuf.front()->linear_acceleration.z);
           cv::Point3f gyr(mpImuGb->imuBuf.front()->angular_velocity.x, mpImuGb->imuBuf.front()->angular_velocity.y, mpImuGb->imuBuf.front()->angular_velocity.z);
-          vImuMeas.push_back(ORB_SLAM3::IMU::Point(acc,gyr,t));
+          vImuMeas.push_back(ORB_SLAM3_O::IMU::Point(acc,gyr,t));
           mpImuGb->imuBuf.pop();
         }
       }

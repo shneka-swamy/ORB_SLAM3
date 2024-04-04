@@ -29,7 +29,7 @@
 
 using namespace std;
 
-namespace ORB_SLAM3
+namespace ORB_SLAM3_O
 {
 
     const int ORBmatcher::TH_HIGH = 100;

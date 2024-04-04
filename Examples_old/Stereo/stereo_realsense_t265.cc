@@ -89,11 +89,11 @@ int main(int argc, char **argv)
     cout << "IMU data in the sequence: " << nImu << endl << endl;*/
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    ORB_SLAM3::System SLAM(argv[1],argv[2],ORB_SLAM3::System::STEREO, true, 0, file_name);
+    ORB_SLAM3_O::System SLAM(argv[1],argv[2],ORB_SLAM3_O::System::STEREO, true, 0, file_name);
     float imageScale = SLAM.GetImageScale();
 
     cv::Mat imLeft, imRight;
-    vector<ORB_SLAM3::IMU::Point> vImuMeas;
+    vector<ORB_SLAM3_O::IMU::Point> vImuMeas;
 
     rs2::stream_profile fisheye_stream_left = pipe_profile.get_stream(RS2_STREAM_FISHEYE, 1);
     rs2_intrinsics intrinsics_left = fisheye_stream_left.as<rs2::video_stream_profile>().get_intrinsics();

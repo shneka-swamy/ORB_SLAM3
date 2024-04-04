@@ -21,7 +21,7 @@
 #include "ImuTypes.h"
 #include<mutex>
 
-namespace ORB_SLAM3
+namespace ORB_SLAM3_O
 {
 
 long unsigned int KeyFrame::nNextId=0;

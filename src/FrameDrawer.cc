@@ -24,7 +24,7 @@
 
 #include<mutex>
 
-namespace ORB_SLAM3
+namespace ORB_SLAM3_O
 {
 
 FrameDrawer::FrameDrawer(Atlas* pAtlas):both(false),mpAtlas(pAtlas)

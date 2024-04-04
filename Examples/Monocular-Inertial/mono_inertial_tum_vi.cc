@@ -99,7 +99,7 @@ int main(int argc, char **argv)
     cout << "IMU data in the sequence: " << nImu << endl << endl;*/
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    ORB_SLAM3::System SLAM(argv[1],argv[2],ORB_SLAM3::System::IMU_MONOCULAR, false, 0, file_name);
+    ORB_SLAM3_O::System SLAM(argv[1],argv[2],ORB_SLAM3_O::System::IMU_MONOCULAR, false, 0, file_name);
     float imageScale = SLAM.GetImageScale();
 
     double t_resize = 0.f;
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
 
     // Main loop
     cv::Mat im;
-    vector<ORB_SLAM3::IMU::Point> vImuMeas;
+    vector<ORB_SLAM3_O::IMU::Point> vImuMeas;
     proccIm = 0;
     cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE(3.0, cv::Size(8, 8));
     for(int ni=0; ni<nImages; ni++, proccIm++)
@@ -141,7 +141,7 @@ int main(int argc, char **argv)
         while(vTimestampsImu[first_imu]<=vTimestampsCam[ni])
         {
           vImuMeas.push_back(
-              ORB_SLAM3::IMU::Point(
+              ORB_SLAM3_O::IMU::Point(
                 vAcc[first_imu].x,
                 vAcc[first_imu].y,
                 vAcc[first_imu].z,

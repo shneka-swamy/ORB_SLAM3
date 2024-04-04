@@ -29,7 +29,7 @@
 #include "Thirdparty/DBoW2/DUtils/Random.h"
 #include "System.h"
 
-namespace ORB_SLAM3
+namespace ORB_SLAM3_O
 {
 
 

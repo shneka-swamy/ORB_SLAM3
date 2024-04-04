@@ -23,7 +23,7 @@
 #include "Pinhole.h"
 #include "KannalaBrandt8.h"
 
-namespace ORB_SLAM3
+namespace ORB_SLAM3_O
 {
 
 Atlas::Atlas(){

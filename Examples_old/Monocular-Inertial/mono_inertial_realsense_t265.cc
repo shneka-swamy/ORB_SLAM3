@@ -64,7 +64,7 @@ int main(int argc, char **argv)
         bFileName = true;
     }
 
-    ORB_SLAM3::System SLAM(argv[1],argv[2],ORB_SLAM3::System::IMU_MONOCULAR, true, 0, file_name);
+    ORB_SLAM3_O::System SLAM(argv[1],argv[2],ORB_SLAM3_O::System::IMU_MONOCULAR, true, 0, file_name);
     float imageScale = SLAM.GetImageScale();
 
     struct sigaction sigIntHandler;
@@ -204,7 +204,7 @@ int main(int argc, char **argv)
 
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    vector<ORB_SLAM3::IMU::Point> vImuMeas;
+    vector<ORB_SLAM3_O::IMU::Point> vImuMeas;
 
     double timestamp;
     cv::Mat im;
@@ -295,7 +295,7 @@ int main(int argc, char **argv)
 
 
         for(int i=0; i<vGyro.size(); ++i){
-            ORB_SLAM3::IMU::Point lastPoint(vAccel[i].x, vAccel[i].y, vAccel[i].z,
+            ORB_SLAM3_O::IMU::Point lastPoint(vAccel[i].x, vAccel[i].y, vAccel[i].z,
                                             vGyro[i].x, vGyro[i].y, vGyro[i].z,
                                             vGyro_times[i]);
             vImuMeas.push_back(lastPoint);

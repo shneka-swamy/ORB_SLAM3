@@ -38,7 +38,7 @@
 #include "Thirdparty/g2o/g2o/core/robust_kernel_impl.h"
 #include "Thirdparty/g2o/g2o/solvers/linear_solver_dense.h"
 
-namespace ORB_SLAM3
+namespace ORB_SLAM3_O
 {
 
 class LoopClosing;

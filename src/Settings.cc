@@ -33,7 +33,7 @@ using namespace std;
 #define OPTIONAL_PRINT_DISABLE 1
 #define PRINT_PLACEHOLDER_DISABLE 1
 
-namespace ORB_SLAM3 {
+namespace ORB_SLAM3_O {
 
     template<>
     float Settings::readParameter<float>(cv::FileStorage& fSettings, const std::string& name, bool& found, const bool required){

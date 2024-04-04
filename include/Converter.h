@@ -29,7 +29,7 @@
 #include "Thirdparty/Sophus/sophus/geometry.hpp"
 #include "Thirdparty/Sophus/sophus/sim3.hpp"
 
-namespace ORB_SLAM3
+namespace ORB_SLAM3_O
 {
 
 class Converter

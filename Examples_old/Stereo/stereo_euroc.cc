@@ -126,7 +126,7 @@ int main(int argc, char **argv)
     cout.precision(17);
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    ORB_SLAM3::System SLAM(argv[1],argv[2],ORB_SLAM3::System::STEREO, false);
+    ORB_SLAM3_O::System SLAM(argv[1],argv[2],ORB_SLAM3_O::System::STEREO, false);
     float imageScale = SLAM.GetImageScale();
 
     cv::Mat imLeft, imRight, imLeftRect, imRightRect;
@@ -211,7 +211,7 @@ int main(int argc, char **argv)
     #endif
 
             // Pass the images to the SLAM system
-            SLAM.TrackStereo(imLeftRect,imRightRect,tframe, vector<ORB_SLAM3::IMU::Point>(), vstrImageLeft[seq][ni]);
+            SLAM.TrackStereo(imLeftRect,imRightRect,tframe, vector<ORB_SLAM3_O::IMU::Point>(), vstrImageLeft[seq][ni]);
 
     #ifdef COMPILEDWITHC11
             std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();

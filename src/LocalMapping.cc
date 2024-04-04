@@ -27,7 +27,7 @@
 #include<mutex>
 #include<chrono>
 
-namespace ORB_SLAM3
+namespace ORB_SLAM3_O
 {
 
 LocalMapping::LocalMapping(System* pSys, Atlas *pAtlas, const float bMonocular, bool bInertial, const string &_strSeqName):

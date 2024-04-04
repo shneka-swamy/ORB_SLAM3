@@ -30,7 +30,7 @@
 #include <boost/serialization/base_object.hpp>
 
 
-namespace ORB_SLAM3
+namespace ORB_SLAM3_O
 {
 
 class MapPoint;

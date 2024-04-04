@@ -32,7 +32,7 @@
 #include <boost/serialization/export.hpp>
 
 
-namespace ORB_SLAM3
+namespace ORB_SLAM3_O
 {
 class Viewer;
 class Map;

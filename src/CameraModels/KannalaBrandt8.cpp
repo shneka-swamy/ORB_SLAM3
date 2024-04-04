@@ -20,9 +20,9 @@
 
 #include <boost/serialization/export.hpp>
 
-//BOOST_CLASS_EXPORT_IMPLEMENT(ORB_SLAM3::KannalaBrandt8)
+//BOOST_CLASS_EXPORT_IMPLEMENT(ORB_SLAM3_O::KannalaBrandt8)
 
-namespace ORB_SLAM3 {
+namespace ORB_SLAM3_O {
 //BOOST_CLASS_EXPORT_GUID(KannalaBrandt8, "KannalaBrandt8")
 
     cv::Point2f KannalaBrandt8::project(const cv::Point3f &p3D) {

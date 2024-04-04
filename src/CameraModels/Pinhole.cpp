@@ -20,9 +20,9 @@
 
 #include <boost/serialization/export.hpp>
 
-//BOOST_CLASS_EXPORT_IMPLEMENT(ORB_SLAM3::Pinhole)
+//BOOST_CLASS_EXPORT_IMPLEMENT(ORB_SLAM3_O::Pinhole)
 
-namespace ORB_SLAM3 {
+namespace ORB_SLAM3_O {
 //BOOST_CLASS_EXPORT_GUID(Pinhole, "Pinhole")
 
     long unsigned int GeometricCamera::nNextId=0;

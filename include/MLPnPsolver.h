@@ -55,7 +55,7 @@
 #include<Eigen/Dense>
 #include<Eigen/Sparse>
 
-namespace ORB_SLAM3{
+namespace ORB_SLAM3_O{
     class MLPnPsolver {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

@@ -21,7 +21,7 @@
 
 #include<mutex>
 
-namespace ORB_SLAM3
+namespace ORB_SLAM3_O
 {
 
   long unsigned int Map::nNextId=0;

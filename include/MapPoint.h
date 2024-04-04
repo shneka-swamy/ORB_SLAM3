@@ -34,7 +34,7 @@
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/map.hpp>
 
-namespace ORB_SLAM3
+namespace ORB_SLAM3_O
 {
 
 class KeyFrame;

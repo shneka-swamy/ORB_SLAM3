@@ -29,7 +29,7 @@
 #include<thread>
 
 
-namespace ORB_SLAM3
+namespace ORB_SLAM3_O
 {
 
 LoopClosing::LoopClosing(Atlas *pAtlas, KeyFrameDatabase *pDB, ORBVocabulary *pVoc, const bool bFixScale, const bool bActiveLC):

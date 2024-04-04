@@ -26,7 +26,7 @@
 
 using namespace std;
 
-namespace ORB_SLAM3
+namespace ORB_SLAM3_O
 {
 
 KeyFrameDatabase::KeyFrameDatabase (const ORBVocabulary &voc):
