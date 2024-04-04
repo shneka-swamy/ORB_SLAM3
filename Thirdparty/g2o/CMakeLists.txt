@@ -10,7 +10,7 @@ configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/config.h
   )
 
-add_library(g2o
+add_library(o_g2o
   #types
   g2o/types/types_sba.h
   g2o/types/types_six_dof_expmap.h
@@ -99,26 +99,26 @@ add_library(g2o
   g2o/stuff/property.h       
   )
 
-set_target_properties(g2o PROPERTIES
+set_target_properties(o_g2o PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin"
   LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib"
   ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib"
   )
 
-target_link_libraries(g2o
+target_link_libraries(o_g2o
   ${EIGEN3_LIBS}
   )
 
-target_include_directories(g2o PUBLIC
+target_include_directories(o_g2o PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/core
   ${CMAKE_CURRENT_SOURCE_DIR}/types
   ${CMAKE_CURRENT_SOURCE_DIR}/stuff
   )
 
-target_compile_options(g2o PUBLIC
+target_compile_options(o_g2o PUBLIC
   -Wno-deprecated-declarations)
 
-target_include_directories(g2o SYSTEM PUBLIC
+target_include_directories(o_g2o SYSTEM PUBLIC
   ${EIGEN3_INCLUDE_DIR}
   )
 
