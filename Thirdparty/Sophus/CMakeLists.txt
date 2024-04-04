@@ -35,7 +35,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 find_package(Eigen3 3.3.0 REQUIRED)
 
 # Define interface library target
-add_library(sophus INTERFACE)
+add_library(o_sophus INTERFACE)
 
 set(SOPHUS_HEADER_FILES
   sophus/average.hpp
@@ -66,27 +66,27 @@ set(SOPHUS_OTHER_FILES
 
 if(MSVC)
   # Define common math constants if we compile with MSVC
-  target_compile_definitions (sophus INTERFACE _USE_MATH_DEFINES)
+  target_compile_definitions (o_sophus INTERFACE _USE_MATH_DEFINES)
 endif (MSVC)
 
 # Add Eigen interface dependency, depending on available cmake info
 if(TARGET Eigen3::Eigen)
-  target_link_libraries(sophus INTERFACE Eigen3::Eigen)
+  target_link_libraries(o_sophus INTERFACE Eigen3::Eigen)
   set(Eigen3_DEPENDENCY "find_dependency (Eigen3 ${Eigen3_VERSION})")
-  target_compile_options(sophus INTERFACE -Wno-deprecated-declarations)
+  target_compile_options(o_sophus INTERFACE -Wno-deprecated-declarations)
 else(TARGET Eigen3::Eigen)
-  target_include_directories (sophus SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
-  target_compile_options(sophus INTERFACE -Wno-deprecated-declarations)
+  target_include_directories (o_sophus SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
+  target_compile_options(o_sophus INTERFACE -Wno-deprecated-declarations)
 endif(TARGET Eigen3::Eigen)
 
 # Associate target with include directory
-target_include_directories(sophus INTERFACE
+target_include_directories(o_sophus INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
 # Declare all used C++11 features
-target_compile_features (sophus INTERFACE
+target_compile_features (o_sophus INTERFACE
   cxx_auto_type
   cxx_decltype
   cxx_nullptr
@@ -101,29 +101,29 @@ add_custom_target(other SOURCES ${SOPHUS_OTHER_FILES})
 # Create 'test' make target using ctest
 option(BUILD_TESTS "Build tests." ON)
 if(BUILD_TESTS)
-    enable_testing()
-    add_subdirectory(test)
+  #    enable_testing()
+  #    add_subdirectory(test)
 endif()
 
 # Create examples make targets using ctest
 option(BUILD_EXAMPLES "Build examples." ON)
 if(BUILD_EXAMPLES)
-    add_subdirectory(examples)
+  #    add_subdirectory(examples)
 endif()
 
 # Export package for use from the build tree
 set(SOPHUS_CMAKE_EXPORT_DIR ${CMAKE_INSTALL_DATADIR}/sophus/cmake)
 
-set_target_properties(sophus PROPERTIES EXPORT_NAME Sophus)
+set_target_properties(o_sophus PROPERTIES EXPORT_NAME o_Sophus)
 
-install(TARGETS sophus EXPORT SophusTargets)
+install(TARGETS o_sophus EXPORT SophusTargets)
 install(EXPORT SophusTargets
   NAMESPACE Sophus::
   DESTINATION ${SOPHUS_CMAKE_EXPORT_DIR}
 )
 
-export(TARGETS sophus NAMESPACE Sophus:: FILE SophusTargets.cmake)
-export(PACKAGE Sophus)
+export(TARGETS o_sophus NAMESPACE Sophus:: FILE SophusTargets.cmake)
+export(PACKAGE o_Sophus)
 
 configure_package_config_file(
   SophusConfig.cmake.in
