@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12.1)
-project(ORB_SLAM3)
+project(o_ORB_SLAM3)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -12,7 +12,7 @@ add_subdirectory(Thirdparty/g2o)
 add_subdirectory(Thirdparty/DBoW2)
 add_subdirectory(Thirdparty/Sophus)
 
-add_library(ORB_SLAM3
+add_library(o_ORB_SLAM3
   src/System.cc
   src/Tracking.cc
   src/LocalMapping.cc
@@ -43,7 +43,7 @@ add_library(ORB_SLAM3
   src/Settings.cc
   )
 
-set_target_properties(ORB_SLAM3 PROPERTIES
+set_target_properties(o_ORB_SLAM3 PROPERTIES
   CXX_STANDARD 17
   CXX_STANDARD_REQUIRED YES
   CXX_EXTENSIONS NO
@@ -52,19 +52,19 @@ set_target_properties(ORB_SLAM3 PROPERTIES
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
   )
 
-target_include_directories(ORB_SLAM3 PUBLIC
+target_include_directories(o_ORB_SLAM3 PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/include/CameraModels
   )
 
-target_include_directories(ORB_SLAM3 SYSTEM PUBLIC
+target_include_directories(o_ORB_SLAM3 SYSTEM PUBLIC
   ${EIGEN3_INLCUDE_DIR}
   ${Pangolin_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Thirdparty/Sophus
   )
 
-target_link_libraries(ORB_SLAM3 PUBLIC
+target_link_libraries(o_ORB_SLAM3 PUBLIC
   ${OpenCV_LIBS}
   ${EIGEN3_LIBS}
   ${Pangolin_LIBRARIES}
@@ -74,22 +74,22 @@ target_link_libraries(ORB_SLAM3 PUBLIC
   -lcrypto              # TODO: why is this needed?
   )
 
-target_compile_options(ORB_SLAM3 PUBLIC
+target_compile_options(o_ORB_SLAM3 PUBLIC
   -Wno-deprecated-declarations
   )
 
 if (real_sense2_FOUND)
-  target_include_directories(ORB_SLAM3 SYSTEM PUBLIC
+  target_include_directories(o_ORB_SLAM3 SYSTEM PUBLIC
     ${realsense_INCLUDE_DIR}
     )
-  target_link_libraries(ORB_SLAM3 PUBLIC
+  target_link_libraries(o_ORB_SLAM3 PUBLIC
     ${realsense2_LIBRARY}
     )
 endif()
 
 function(compileORB3 exec files)
   add_executable(${exec} ${files})
-  target_link_libraries(${exec} ORB_SLAM3)
+  target_link_libraries(${exec} o_ORB_SLAM3)
   set_target_properties(${exec} PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED YES
