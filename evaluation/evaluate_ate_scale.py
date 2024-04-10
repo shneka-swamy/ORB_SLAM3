@@ -63,8 +63,8 @@ def align(model,data):
     data_zerocentered = data - data.mean(1)
     
     # TODO: Revert back to the zero centering of the dataset
-    data_zerocentered = data
-    model_zerocentered = model
+    # data_zerocentered = data
+    # model_zerocentered = model
 
 
     W = numpy.zeros( (3,3) )
