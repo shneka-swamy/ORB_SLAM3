@@ -5,7 +5,10 @@
 #--------------------------------------------------------------------------------------------
 File.version: "1.0"
 
-Camera.type: "PinHole"
+#Camera.type: "PinHole"
+# Provided rectified images to match with the implementation of TartanVO
+# Change if using for other applications
+Camera.type: "Rectified"
 
 # Camera calibration and distortion parameters (OpenCV) 
 Camera1.fx: 458.654
