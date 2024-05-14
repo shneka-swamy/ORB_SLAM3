@@ -293,7 +293,7 @@ protected:
     float mbf;
     float mImageScale;
 
-    float mImuFreq;
+    float mImuFreq = -1;
     double mImuPer;
     bool mInsertKFsLost;
 

@@ -53,6 +53,7 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
         newParameterLoader(settings);
     }
     else{
+      assert(false); // Putting to make sure that the settings are loaded
         cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
 
         bool b_parse_cam = ParseCamParamFile(fSettings);
@@ -604,6 +605,7 @@ void Tracking::newParameterLoader(Settings *settings) {
     float Ngw = settings->gyroWalk();
     float Naw = settings->accWalk();
 
+    assert (mSensor == System::RGBD || mImuFreq>0);
     const float sf = sqrt(mImuFreq);
     mpImuCalib = new IMU::Calib(Tbc,Ng*sf,Na*sf,Ngw/sf,Naw/sf);
 
