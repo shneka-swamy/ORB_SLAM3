@@ -136,7 +136,8 @@ namespace ORB_SLAM3 {
     }
 
     Settings::Settings(const std::string &configFile, const int& sensor) :
-    bNeedToUndistort_(false), bNeedToRectify_(false), bNeedToResize1_(false), bNeedToResize2_(false) {
+    bNeedToUndistort_(false), bNeedToRectify_(false), bNeedToResize1_(false), bNeedToResize2_(false),
+    imuFrequency_(-1) {
         sensor_ = sensor;
 
         //Open settings file

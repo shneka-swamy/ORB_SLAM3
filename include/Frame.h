@@ -261,7 +261,7 @@ public:
 
     // Imu preintegration from last keyframe
     IMU::Preintegrated* mpImuPreintegrated;
-    KeyFrame* mpLastKeyFrame;
+    KeyFrame* mpLastKeyFrame = nullptr;
 
     // Pointer to previous frame
     Frame* mpPrevFrame;

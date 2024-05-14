@@ -3591,6 +3591,7 @@ void Tracking::UpdateLocalKeyFrames()
         for(int i=0; i<Nd; i++){
             if (!tempKeyFrame)
                 break;
+            assert (tempKeyFrame);
             if(tempKeyFrame->mnTrackReferenceForFrame!=mCurrentFrame.mnId)
             {
                 mvpLocalKeyFrames.push_back(tempKeyFrame);
