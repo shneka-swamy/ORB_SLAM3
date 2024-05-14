@@ -40,8 +40,7 @@ namespace ORB_SLAM3_O
 Verbose::eLevel Verbose::th = Verbose::VERBOSITY_NOTHING;
 
 System::System(const string &strVocFile, const string &strSettingsFile, const eSensor sensor,
-               const bool bUseViewer, const std::string& saveAtlasFile,
-               const int initFr, const string &strSequence):
+               const bool bUseViewer, const int initFr, const string &strSequence, const std::string& saveAtlasFile):
     mSensor(sensor), mpViewer(static_cast<Viewer*>(NULL)), mbReset(false), mbResetActiveMap(false),
     mbActivateLocalizationMode(false), mbDeactivateLocalizationMode(false), mbShutDown(false)
 {
