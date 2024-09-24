@@ -25,6 +25,19 @@
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
         "CMAKE_BUILD_TYPE": "Release"
       }
+    },
+    {
+      "name": "Profile",
+      "description": "Profile configurations with optimizations",
+      "hidden": false,
+      "binaryDir": "cmake-build-profile",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_C_FLAGS_RELWITHDEBINFO": "-pg",
+        "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-pg",
+        "CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO": "-pg"
+      }
     }
   ]
 }
