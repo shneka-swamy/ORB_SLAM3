@@ -45,6 +45,8 @@ import sys
 import numpy
 import argparse
 import associate
+from pathlib import Path
+import re
 
 def align(model,data):
     """Align two trajectories using the method of Horn (closed-form).
@@ -104,6 +106,31 @@ def align(model,data):
     trans_error = numpy.sqrt(numpy.sum(numpy.multiply(alignment_error,alignment_error),0)).A[0]
         
     return rot,transGT,trans_errorGT,trans,trans_error, s
+
+def determineFileName(file_folder, file_read):
+    file_folder = str(file_folder)
+    file_read = str(file_read)
+    file_name = ""
+    print("File folder is: %s" % file_folder)
+    print("File read is: %s" % file_read)
+
+    if re.search('orb', file_read):
+        if re.search('visibility', file_read):
+            file_name = file_folder + "/evo_ape_virtual_orb_visibility.txt"
+        else:
+            file_name = file_folder + "/evo_ape_virtual_orb_no_seen.txt"
+    elif re.search('tartan', file_read):
+        if re.search('visibility', file_read):
+            file_name = file_folder + "/evo_ape_virtual_tartan_visibility.txt"
+        else:
+            file_name = file_folder + "/evo_ape_virtual_tartan_no_seen.txt"
+    else:
+        if re.search('visibility', file_read):
+            file_name = file_folder + "/evo_ape_virtual_appear_visibility.txt"
+        else:
+            file_name = file_folder + "/evo_ape_virtual_appear_no_seen.txt"
+    return file_name
+
 
 def plot_traj(ax,stamps,traj,style,color,label):
     """
@@ -199,7 +226,24 @@ if __name__=="__main__":
     second_stamps.sort()
     second_xyz_full = numpy.matrix([[float(value)*float(args.scale) for value in second_list[b][0:3]] for b in second_stamps]).transpose()
     second_xyz_full_aligned = scale * rot * second_xyz_full + trans
+
+    file_folder = Path(args.second_file).parent
+    file_read = Path(args.second_file).name
+    file_name = determineFileName(file_folder, file_read)
+    print("File name is: %s" % file_name)
+    file = open(file_name, "w")
+    file.write("APE translation part calculated here\n")
+    file.write("for unformity\n")
+    file.write("\n")
+    file.write("max " + str(numpy.argmax(trans_error)) + " m\n")
+    file.write("mean " + str(numpy.mean(trans_error)) + " m\n")
+    file.write("median " + str(numpy.median(trans_error)) + " m\n")
+    file.write("min " + str(numpy.min(trans_error)) + " m\n")
+    file.write("rmse " + str(numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error))) + " m\n")
+    file.write ("sse " + str(int(0)) + " m\n")
+    file.write("std " + str(numpy.std(trans_error)) + " m\n")
     
+
     if args.verbose:
         print("compared_pose_pairs %d pairs"%(len(trans_error)))
 
