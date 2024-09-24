@@ -12,7 +12,7 @@ number=3
 for dataset in $(ls $folder); do
   if [ -d $folder/$dataset ]; then
     file_name="f_${dataset}"
-    ../cmake-build-release/bin/mono_tum_vi ../Vocabulary/ORBvoc.txt Monocular/TUM$number.yaml "$folder/${dataset}/gray" "$folder/timestamp.txt" $file_name
+    ../cmake-build-release/bin/mono_tum_vi ../Vocabulary/ORBvoc.txt Monocular/TUM$number.yaml "$folder/${dataset}/gray" "/media/scratch/TUM/$dataset/timestamp.txt" $file_name
 
     pushd ../evaluation
       python3 evaluate_ate_scale_dummy.py $folder/groundtruth.txt ../Examples/f_$file_name.txt --plot $file_name.pdf --verbose

@@ -10,7 +10,7 @@ fi
 
 # make a list of desk_with_person, sitting_xyz and walking_xyz
 patternList=("desk_with_person" "sitting_xyz" "walking_xyz")
-patternList=("sitting_xyz" "walking_xyz")
+patternList=("walking_xyz")
 
 input_dir=""
 verbose=false
@@ -99,25 +99,25 @@ launch_mono_tum() {
         # remove first line in rgb.txt
         sed -i '1d' "$dir"/rgb.txt
 
-        # override the saving to echo command each time
-        echo -e "\e[K $command $outputfile"
-        $command $outputfile
+        # # override the saving to echo command each time
+        # echo -e "\e[K $command $outputfile"
+        # $command $outputfile
 
-        mv kf_$outputfile.txt $outputfileDir/kf_$outputfile.txt
+        # mv kf_$outputfile.txt $outputfileDir/kf_$outputfile.txt
 
         plotpath="$output_dir"/plot_${outputfile}.png
-        resultpath="$output_dir"/path_${outputfile}.txt
+        resultpath="$output_dir"/path_${outputfile}.zip
 
         # copy groundtruth from rgb_parent to dir
         cp "$rgb_dir_parent"/${rgb_parent}/groundtruth.txt "$dir"/groundtruth.txt
 
         # remove all the line starting with '#' in groundtruth.txt
         sed -i '/^#/ d' "$dir"/groundtruth.txt
-        
+
         # remove first line in groundtruth.txt
         sed -i '1d' "$dir"/groundtruth.txt
 
-        evo_cmd="evo_ape tum $dir/groundtruth.txt $outputfileDir/kf_${outputfile}.txt -as -r full -va --plot_mode xy --save_plot ${plotpath} --save_results ${resultpath} --no_warnings --pose_relation trans_part"
+        evo_cmd="evo_ape tum $dir/groundtruth.txt $outputfileDir/kf_${outputfile}.txt -as --plot_mode xy --save_plot ${plotpath} --save_results ${resultpath} --no_warnings --pose_relation trans_part"
         echo -e "\e[K $evo_cmd"
         $evo_cmd
     done
