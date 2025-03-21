@@ -7,24 +7,40 @@
   },
   "configurePresets": [
     {
-      "name": "Debug",
+      "name": "debug",
       "description": "Debug configurations",
       "hidden": false,
       "binaryDir": "cmake-build-debug",
+      "Generator": "Ninja",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
-      "name": "Release",
+      "name": "release",
       "description": "Release configurations",
       "hidden": false,
       "binaryDir": "cmake-build-release",
+      "Generator": "Ninja",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
         "CMAKE_BUILD_TYPE": "Release"
       }
+    }
+  ],
+  "buildPresets": [
+    {
+       "name": "debug",
+       "displayName": "Build Debug",
+       "description": "Build the debug version",
+       "configurePreset": "debug"
+    },
+    {
+       "name": "release",
+       "displayName": "Build Release",
+       "description": "Build the release version",
+       "configurePreset": "release"
     }
   ]
 }
