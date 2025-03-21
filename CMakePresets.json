@@ -11,7 +11,7 @@
       "description": "Debug configurations",
       "hidden": false,
       "binaryDir": "cmake-build-debug",
-      "Generator": "Ninja",
+      "generator": "Ninja",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
         "CMAKE_BUILD_TYPE": "Debug"
@@ -22,7 +22,7 @@
       "description": "Release configurations",
       "hidden": false,
       "binaryDir": "cmake-build-release",
-      "Generator": "Ninja",
+      "generator": "Ninja",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
         "CMAKE_BUILD_TYPE": "Release"
