@@ -45,6 +45,7 @@ import sys
 import numpy
 import argparse
 import associate
+from pathlib import Path
 
 def align(model,data):
     """Align two trajectories using the method of Horn (closed-form).
@@ -90,7 +91,7 @@ def align(model,data):
         s = 0.0 
     else:
         s = float(dots/norms)    
-    
+
     transGT = data.mean(1) - s*rot * model.mean(1)
     trans = data.mean(1) - rot * model.mean(1)
 
@@ -102,7 +103,6 @@ def align(model,data):
 
     trans_errorGT = numpy.sqrt(numpy.sum(numpy.multiply(alignment_errorGT,alignment_errorGT),0)).A[0]
     trans_error = numpy.sqrt(numpy.sum(numpy.multiply(alignment_error,alignment_error),0)).A[0]
-        
     return rot,transGT,trans_errorGT,trans,trans_error, s
 
 def plot_traj(ax,stamps,traj,style,color,label):
@@ -152,6 +152,9 @@ if __name__=="__main__":
     parser.add_argument('--plot', help='plot the first and the aligned second trajectory to an image (format: png)')
     parser.add_argument('--verbose', help='print all evaluation data (otherwise, only the RMSE absolute translational error in meters after alignment will be printed)', action='store_true')
     parser.add_argument('--verbose2', help='print scale eror and RMSE absolute translational error in meters after alignment with and without scale correction', action='store_true')
+    parser.add_argument('--output_dir', help="Directory where the output must be stored", default='../results/')
+    parser.add_argument('--output_file', help="Filename of the output", default='ATE.txt')
+
     args = parser.parse_args()
 
     first_list = associate.read_file_list(args.first_file, False)
@@ -166,28 +169,8 @@ if __name__=="__main__":
     sorted_second_list = sorted(dictionary_items)
 
     second_xyz_full = numpy.matrix([[float(value)*float(args.scale) for value in sorted_second_list[i][1][0:3]] for i in range(len(sorted_second_list))]).transpose() # sorted_second_list.keys()]).transpose()
-    rot,transGT,trans_errorGT,trans,trans_error, scale = align(second_xyz,first_xyz)
-
-    # Check for multiple sections of data
-    number_linear_first = 0
-    number_linear_second = 0
-
-    for i in range(1, 51, 5):
-        _, _, _, _, _, scale = align(second_xyz_full[:, 0:i], first_xyz[:, 0:i])
-        #print("Scale for first %d frames is: %f" % (i, scale))
-
-        if i == 0:
-            continue
-        else:
-            for j in range(i-5, i):
-                if numpy.linalg.norm(second_xyz_full[:, j] - second_xyz_full[:, j-1]) < 0.1:
-                    number_linear_second += 1
-                if numpy.linalg.norm(first_xyz[:, j] - first_xyz[:, j-1]) < 0.1:
-                    number_linear_first += 1
 
     rot,transGT,trans_errorGT,trans,trans_error, scale = align(second_xyz,first_xyz)
-    print("Scale for all frames is: %f" % scale)
-
     second_xyz_aligned = scale * rot * second_xyz + trans
     second_xyz_notscaled = rot * second_xyz + trans
     second_xyz_notscaled_full = rot * second_xyz_full + trans
@@ -200,6 +183,31 @@ if __name__=="__main__":
     second_xyz_full = numpy.matrix([[float(value)*float(args.scale) for value in second_list[b][0:3]] for b in second_stamps]).transpose()
     second_xyz_full_aligned = scale * rot * second_xyz_full + trans
     
+    output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = str(output_dir) + '/' + args.output_file
+    print("Output path is:", output_path)
+
+    rmse_error = numpy.sqrt(numpy.dot(trans_errorGT,trans_errorGT) / len(trans_errorGT))
+    mean_error = numpy.mean(trans_errorGT)
+    median_error = numpy.median(trans_errorGT)
+    std_error = numpy.std(trans_errorGT)
+    min_error = numpy.min(trans_errorGT)
+    max_error = numpy.max(trans_errorGT)
+    
+    with open(output_path, "w") as file:
+        file.write("APE w.r.t translation part (m)\n")
+        file.write("(With Sim(3) Umeyama alignment)\n")
+        file.write("\n")
+        file.write(f"max {max_error}\n")
+        file.write(f"mean {mean_error}\n")
+        file.write(f"median {median_error}\n")
+        file.write(f"min {min_error}\n")
+        file.write(f"rmse {rmse_error}\n")
+        file.write(f"scale {scale}\n")
+        file.write(f"std {std_error}\n")
+
+
     if args.verbose:
         print("compared_pose_pairs %d pairs"%(len(trans_error)))
 
@@ -211,6 +219,17 @@ if __name__=="__main__":
         print("absolute_translational_error.max %f m"%numpy.max(trans_error))
         print("max idx: %i" %numpy.argmax(trans_error))
         print("The scale is: %f" %scale)
+
+        print("Printing the same for the scaled values")
+        print("absolute_translational_error.rmse %f m"%numpy.sqrt(numpy.dot(trans_errorGT,trans_errorGT) / len(trans_errorGT)))
+        print("absolute_translational_error.mean %f m"%numpy.mean(trans_errorGT))
+        print("absolute_translational_error.median %f m"%numpy.median(trans_errorGT))
+        print("absolute_translational_error.std %f m"%numpy.std(trans_errorGT))
+        print("absolute_translational_error.min %f m"%numpy.min(trans_errorGT))
+        print("absolute_translational_error.max %f m"%numpy.max(trans_errorGT))
+        print("max idx: %i" %numpy.argmax(trans_errorGT))
+
+
     else:
         # print "%f, %f " % (numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)),  scale)
         # print "%f,%f" % (numpy.sqrt(numpy.dot(trans_error,trans_error) / len(trans_error)),  scale)
@@ -252,6 +271,3 @@ if __name__=="__main__":
         ax.set_ylabel('y [m]')
         plt.axis('equal')
         plt.savefig(args.plot,format="pdf")
-
-
-        

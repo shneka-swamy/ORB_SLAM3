@@ -8,7 +8,7 @@ File.version: "1.0"
 #Camera.type: "PinHole"
 # Provided rectified images to match with the implementation of TartanVO
 # Change if using for other applications
-Camera.type: "Rectified"
+Camera.type: "PinHole"
 
 # Camera calibration and distortion parameters (OpenCV) 
 Camera1.fx: 458.654
@@ -85,5 +85,5 @@ Viewer.ViewpointY: -0.7
 Viewer.ViewpointZ: -3.5 # -1.8
 Viewer.ViewpointF: 500.0
 
-System.SaveAtlasToFile: "./atlasFile"
+#System.SaveAtlasToFile: "./atlasFile"
 

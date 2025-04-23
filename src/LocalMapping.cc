@@ -137,7 +137,7 @@ void LocalMapping::Run()
                         {
                             if((mTinit<10.f) && (dist<0.02))
                             {
-                                cout << "Not enough motion for initializing. Reseting..." << endl;
+                                //cout << "Not enough motion for initializing. Reseting..." << endl;
                                 unique_lock<mutex> lock(mMutexReset);
                                 mbResetRequestedActiveMap = true;
                                 mpMapToReset = mpCurrentKeyFrame->GetMap();

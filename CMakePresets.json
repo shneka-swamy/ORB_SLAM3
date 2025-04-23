@@ -2,45 +2,64 @@
   "version": 3,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 12,
-    "patch": 1
+    "minor": 19,
+    "patch": 0
   },
   "configurePresets": [
     {
       "name": "debug",
-      "description": "Debug configurations",
-      "hidden": false,
-      "binaryDir": "cmake-build-debug",
+      "displayName": "Debug Build",
+      "description": "Debug build in build/debug",
       "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/debug",
       "cacheVariables": {
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      }
+    },
+    {
+      "name": "fast-debug",
+      "displayName": "Fast Debug Build",
+      "description": "Optimized with debug symbols in build/fast-debug",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/fast-debug",
+      "cacheVariables": {
+     "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-O2 -g -gsplit-dwarf",
+        "CMAKE_C_FLAGS_RELWITHDEBINFO": "-O2 -g -gsplit-dwarf"
       }
     },
     {
       "name": "release",
-      "description": "Release configurations",
-      "hidden": false,
-      "binaryDir": "cmake-build-release",
+      "displayName": "Release Build",
+      "description": "Release build in build/release",
       "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/release",
       "cacheVariables": {
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
       }
     }
   ],
   "buildPresets": [
     {
-       "name": "debug",
-       "displayName": "Build Debug",
-       "description": "Build the debug version",
-       "configurePreset": "debug"
+      "name": "debug",
+      "displayName":  "Build Debug",
+      "description": "Build the debug version",
+      "configurePreset": "debug"
     },
     {
-       "name": "release",
-       "displayName": "Build Release",
-       "description": "Build the release version",
-       "configurePreset": "release"
+      "name": "fast-debug",
+      "displayName": "Build Fast Debug",
+      "description": "Build the fast debug version",
+      "configurePreset": "fast-debug"
+    },
+    {
+      "name": "release",
+      "displayName":  "Build Release",
+      "description": "Build the release version",
+      "configurePreset": "release"
     }
   ]
 }

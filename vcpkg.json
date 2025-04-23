@@ -1,0 +1,16 @@
+{
+  "dependencies": [
+    {
+      "name": "pangolin",
+      "default-features": false,
+      "features": [
+        "jpeg",
+        "png"
+      ]
+    },
+    { "name": "opencv" },
+    { "name": "boost" },
+    { "name": "eigen3" },  
+    { "name": "sophus" }
+]
+}

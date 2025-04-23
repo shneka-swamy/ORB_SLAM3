@@ -3,15 +3,16 @@ project(ORB_SLAM3)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(OpenCV 4.4 REQUIRED)
+#find_package(OpenCV 4.4 REQUIRED)
+find_package(OpenCV CONFIG REQUIRED) 
 find_package(Eigen3 3.1.0 REQUIRED)
 find_package(Pangolin REQUIRED)
 # find_package(realsense2 QUIET)
+find_package(Sophus CONFIG REQUIRED)
 
 add_subdirectory(Thirdparty/g2o)
 add_subdirectory(Thirdparty/DBoW2)
-add_subdirectory(Thirdparty/Sophus)
-
+#add_subdirectory(Thirdparty/Sophus)
 add_library(ORB_SLAM3
   src/System.cc
   src/Tracking.cc
@@ -61,13 +62,14 @@ target_include_directories(ORB_SLAM3 SYSTEM PUBLIC
   ${EIGEN3_INLCUDE_DIR}
   ${Pangolin_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/Thirdparty/Sophus
+  #${CMAKE_CURRENT_SOURCE_DIR}/Thirdparty/Sophus
   )
 
 target_link_libraries(ORB_SLAM3 PUBLIC
   ${OpenCV_LIBS}
   ${EIGEN3_LIBS}
-  ${Pangolin_LIBRARIES}
+  ${Pangolin_LIBRARIES}  
+  Sophus::Sophus
   DBoW2
   g2o
   -lboost_serialization # TODO: why is this needed?
