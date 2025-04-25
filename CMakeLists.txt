@@ -44,6 +44,8 @@ add_library(ORB_SLAM3
   src/Settings.cc
   )
 
+option(ENABLE_REGISTER_TIMES "Enable timing registration" ON)
+
 set_target_properties(ORB_SLAM3 PROPERTIES
   CXX_STANDARD 17
   CXX_STANDARD_REQUIRED YES
@@ -79,6 +81,12 @@ target_link_libraries(ORB_SLAM3 PUBLIC
 target_compile_options(ORB_SLAM3 PUBLIC
   -Wno-deprecated-declarations
   )
+
+if(ENABLE_REGISTER_TIMES)
+  target_compile_definitions(ORB_SLAM3 PRIVATE REGISTER_TIMES)
+endif()
+
+
 
 if (real_sense2_FOUND)
   target_include_directories(ORB_SLAM3 SYSTEM PUBLIC

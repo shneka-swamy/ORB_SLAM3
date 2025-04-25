@@ -3431,7 +3431,7 @@ void Tracking::UpdateLocalPoints()
 
     int count_pts = 0;
 
-    cout<<"Called boost process"<< mvpLocalKeyFrames.size()<<endl;
+    //cout<<" boost process"<< mvpLocalKeyFrames.size()<<endl;
     for(vector<KeyFrame*>::const_reverse_iterator itKF=mvpLocalKeyFrames.rbegin(), itEndKF=mvpLocalKeyFrames.rend(); itKF!=itEndKF; ++itKF)
     {
         KeyFrame* pKF = *itKF;
