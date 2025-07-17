@@ -159,6 +159,7 @@ int main(int argc, char *argv[])
                 cv::resize(im, im, cv::Size(width, height));
 #ifdef REGISTER_TIMES
     #ifdef COMPILEDWITHC11
+                std::cout<<"Macro is set in the main code"<<endl;
                 std::chrono::steady_clock::time_point t_End_Resize = std::chrono::steady_clock::now();
     #else
                 std::chrono::monotonic_clock::time_point t_End_Resize = std::chrono::monotonic_clock::now();
@@ -229,6 +230,7 @@ int main(int argc, char *argv[])
         }
     }
 
+    std::cout<<"Calling the system to shut down"<<endl;
     // Stop all threads
     SLAM.Shutdown();
 
