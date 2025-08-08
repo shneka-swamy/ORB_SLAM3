@@ -86,6 +86,7 @@ void LocalMapping::Run()
 
             double timeProcessKF = std::chrono::duration_cast<std::chrono::duration<double,std::milli> >(time_EndProcessKF - time_StartProcessKF).count();
             vdKFInsert_ms.push_back(timeProcessKF);
+            mtimeStamp.push_back(timestamp);
 #endif
 
             // Check recent MapPoints
