@@ -96,3 +96,8 @@ borrar/*
 
 .cache/
 compile_commands.json
+
+cmake/
+results/
+vcpkg_installed/
+
