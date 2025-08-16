@@ -87,6 +87,13 @@ def associate(first_list, second_list,offset,max_difference):
     """
     first_keys = list(first_list.keys())
     second_keys = list(second_list.keys())
+    first_set = set(first_keys)
+    second_set = set(second_keys)
+    # common keys
+    common_keys = first_set.intersection(second_set)
+
+    print(f"Found {len(first_keys)} entries in first file, {len(second_keys)} entries in second file, {len(common_keys)} common entries.")
+
     potential_matches = [(abs(a - (b + offset)), a, b) 
                          for a in first_keys 
                          for b in second_keys 
