@@ -116,6 +116,7 @@ compileORB3(mono_tum_vi Examples/Monocular/mono_tum_vi.cc)
 compileORB3(mono_inertial_euroc Examples/Monocular-Inertial/mono_inertial_euroc.cc)
 compileORB3(mono_inertial_tum_vi Examples/Monocular-Inertial/mono_inertial_tum_vi.cc)
 compileORB3(mono_inertial_euroc_tracking Examples/Monocular-Inertial/mono_inertial_euroc_tracking.cc)
+compileORB3(mono_inertial_tum_vi_tracking Examples/Monocular-Inertial/mono_inertial_tum_vi_tracking.cc)
 compileORB3(stereo_inertial_euroc Examples/Stereo-Inertial/stereo_inertial_euroc.cc)
 compileORB3(stereo_inertial_tum_vi Examples/Stereo-Inertial/stereo_inertial_tum_vi.cc)
 
