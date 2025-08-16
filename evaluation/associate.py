@@ -68,6 +68,7 @@ def read_file_list(filename,remove_bounds):
         lines = lines[100:-100]
     list = [[v.strip() for v in line.split(" ") if v.strip()!=""] for line in lines if len(line)>0 and line[0]!="#"]
     list = [(int(l[0].split('.')[0]),l[1:]) for l in list if len(l)>1]
+    print
     return dict(list)
 
 def associate(first_list, second_list,offset,max_difference):
@@ -91,6 +92,13 @@ def associate(first_list, second_list,offset,max_difference):
     second_set = set(second_keys)
     # common keys
     common_keys = first_set.intersection(second_set)
+
+    value_match = 1520500651442278912
+    
+    if value_match in first_set:
+        print("Warning: Value %d found in first file. This may cause problems." % value_match)
+    if value_match in second_set:
+        print("Warning: Value %d found in second file. This may cause problems." % value_match)
 
     print(f"Found {len(first_keys)} entries in first file, {len(second_keys)} entries in second file, {len(common_keys)} common entries.")
 
