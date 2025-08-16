@@ -299,7 +299,7 @@ void LoadImagesTUMVI(const string &strImagePath, const string &strPathTimes,
             int pos = s.find(' ');
             string item = s.substr(0, pos);
 
-            vstrImages.push_back(strImagePath + "/" + item + ".jpg");
+            vstrImages.push_back(strImagePath + "/" + item + ".png");
             double t = stod(item);
             vTimeStamps.push_back(t/1e9);
         }
